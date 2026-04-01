@@ -6,7 +6,7 @@ import Link from "next/link";
 
 // Mock services data for demonstration
 const services = [
-    { id: 1, name: "John Electrician", category: "electricians", city: "rawalpindi" },
+    { id: 1, name: "Qamar Electrician", category: "electricians", city: "rawalpindi" },
     { id: 2, name: "Ali Electrician", category: "electricians", city: "rawalpindi" },
     { id: 3, name: "Sara Tutor", category: "tutors", city: "rawalpindi" },
 ];
