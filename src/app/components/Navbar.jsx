@@ -40,16 +40,16 @@ const navbar = () => {
         md:justify-between 
         md:pt-0">
                             <li>
-                                <a className="md:p-4 py-2 block hover:text-purple-400" href="#">Categories</a>
+                                <a className="md:p-4 py-2 block hover:text-purple-400" href="/categories">Categories</a>
                             </li>
                             <li>
-                                <a className="md:p-4 py-2 block hover:text-purple-400" href="#">Add Service</a>
+                                <a className="md:p-4 py-2 block hover:text-purple-400" href="/add-service">Add Service</a>
                             </li>
                             <li>
-                                <a className="md:p-4 py-2 block hover:text-purple-400" href="#">Cities</a>
+                                <a className="md:p-4 py-2 block hover:text-purple-400" href="/cities">Cities</a>
                             </li>
                             <li>
-                                <a className="md:p-4 py-2 block hover:text-purple-400 text-purple-500" href="#">Sign Up</a>
+                                <a className="md:p-4 py-2 block hover:text-purple-400 text-purple-500" href="/sign-up">Sign Up</a>
                             </li>
                         </ul>
                     </div>
