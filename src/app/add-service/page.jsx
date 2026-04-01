@@ -1,6 +1,15 @@
 import React from 'react'
 import SectionHeading from '../components/ui/SectionHeading'
-import PrimaryBtn from '../components/ui/PrimaryBtn'
+import FormSubmitBtn from '../components/ui/FormSubmitBtn'
+import IntroSection from '../components/ui/IntroSection'
+import FormHeader from '../components/ui/FormHeader'
+import { cities } from '@/data/cities'
+import { categories } from '@/data/categories'
+
+const introContent = {
+    title: "Add Your Service",
+    subtitle: `Grow your business by reaching customers in your city. List your service in just a few minutes.`
+}
 
 const AddServicePage = () => {
     return (
@@ -8,31 +17,14 @@ const AddServicePage = () => {
             <div className="min-h-screen bg-gray-50">
 
                 {/* Hero Section */}
-                <section className="bg-white py-14">
 
-                    <div className="max-w-4xl mx-auto px-6 text-center">
-
-                        <h1 className="text-4xl font-bold text-gray-800">
-                            Add Your Service
-                        </h1>
-
-                        <p className="mt-4 text-gray-600">
-                            Grow your business by reaching customers in your city.
-                            List your service in just a few minutes.
-                        </p>
-
-                    </div>
-
-                </section>
+                <IntroSection title={introContent.title} subtitle={introContent.subtitle} />
 
 
                 {/* Form Section */}
                 <section className="max-w-4xl mx-auto px-6 py-14">
 
-                    <SectionHeading
-                        title="Service Details"
-                        subtitle="Fill in the information below to list your service"
-                    />
+                    <FormHeader title="Service Details" subtitle="Fill in the information below to list your service" />
 
                     <form className="bg-white border border-gray-200 shadow-sm rounded-xl p-8 space-y-6">
 
@@ -59,13 +51,9 @@ const AddServicePage = () => {
                             <select className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600">
 
                                 <option>Select Category</option>
-                                <option>Electricians</option>
-                                <option>Plumbers</option>
-                                <option>AC Repair</option>
-                                <option>Carpenters</option>
-                                <option>Home Cleaning</option>
-                                <option>Tutors</option>
-                                <option>Tailors</option>
+                                {categories.map((category, index) => (
+                                    <option key={index}>{category.name}</option>
+                                ))}
 
                             </select>
                         </div>
@@ -77,11 +65,14 @@ const AddServicePage = () => {
                                 City
                             </label>
 
-                            <input
-                                type="text"
-                                placeholder="Example: Rawalpindi"
-                                className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                            />
+                            <select className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600">
+
+                                <option>Select City</option>
+                                {cities.map((city, index) => (
+                                    <option key={index}>{city}</option>
+                                ))}
+
+                            </select>
                         </div>
 
 
@@ -143,10 +134,7 @@ const AddServicePage = () => {
                         {/* Submit Button */}
                         <div className="text-center pt-4">
 
-                            <PrimaryBtn
-                                href="#"
-                                title="Submit Service"
-                            />
+                            <FormSubmitBtn title="Submit Service" />
 
                         </div>
 
