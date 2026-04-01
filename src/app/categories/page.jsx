@@ -11,6 +11,7 @@ import {
 
 import SectionHeading from "../components/ui/SectionHeading";
 import PrimaryBtn from "../components/ui/PrimaryBtn";
+import IntroSection from "../components/ui/IntroSection";
 
 const categories = [
   { name: "Electricians", icon: Zap },
@@ -22,31 +23,23 @@ const categories = [
   { name: "Tailors", icon: Scissors },
 ];
 
+const introTitle = "Browse Service Categories";
+const introSubtitle =
+  "Find trusted professionals near you. Select a category to explore verified service providers available in your city.";
+
 export default function CategoriesPage() {
   return (
     <div className="min-h-screen bg-gray-50">
 
       {/* Hero Section */}
-      <section className="bg-white py-14">
-
-        <div className="max-w-4xl mx-auto px-6 text-center">
-
-          <h1 className="text-4xl font-bold text-gray-800">
-            Browse Service Categories
-          </h1>
-
-          <p className="mt-4 text-gray-600">
-            Find trusted professionals near you. Select a category to explore
-            verified service providers available in your city.
-          </p>
-
-        </div>
-
-      </section>
+      <IntroSection
+        title={introTitle}
+        subtitle={introSubtitle}
+      />
 
 
       {/* Categories Grid */}
-      <section className="max-w-6xl mx-auto px-6 py-14">
+      <section className="max-w-6xl mx-auto px-6 lg:pt-4 xl:pt-6 pb-14">
 
         <SectionHeading
           title="Popular Categories"
@@ -104,7 +97,7 @@ export default function CategoriesPage() {
 
 
       {/* CTA Section */}
-      <section className="bg-blue-600 text-white py-14">
+      <section className="bg-blue-400 text-white py-14">
 
         <div className="max-w-3xl mx-auto px-6 text-center">
 
