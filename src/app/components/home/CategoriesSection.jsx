@@ -1,3 +1,4 @@
+import { categories } from '@/data/categories'
 import React from 'react'
 
 const CategoriesSection = () => {
@@ -12,16 +13,7 @@ const CategoriesSection = () => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {[
-            "Electrician",
-            "Plumber",
-            "AC Repair",
-            "Painter",
-            "Carpenter",
-            "Cleaner",
-            "Mechanic",
-            "Home Tutor",
-          ].map((service) => (
+          {categories.map((service) => (
             <div
               key={service}
               className="p-6 border rounded-2xl hover:shadow-md transition cursor-pointer text-center"

@@ -1,9 +1,10 @@
+import Link from 'next/link'
 import React from 'react'
 
 const AddBusinessCTA = () => {
     return (
         <>
-            <section className="py-20">
+            <section className="pb-20">
                 <div className="max-w-5xl mx-auto px-6 text-center bg-indigo-600 text-white rounded-3xl">
                     <div className="py-16">
                         <h2 className="text-3xl font-bold">
@@ -14,9 +15,10 @@ const AddBusinessCTA = () => {
                             Join ServiceMarkaz today and grow your business
                         </p>
 
-                        <button className="mt-6 px-8 py-3 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-gray-100">
+                        <Link href="/add-business" className="inline-block mt-6 px-8 py-3 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-gray-100">
                             Add Your Business
-                        </button>
+                        </Link>
+
                     </div>
                 </div>
             </section>

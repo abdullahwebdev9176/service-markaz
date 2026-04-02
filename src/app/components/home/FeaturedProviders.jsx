@@ -1,11 +1,12 @@
 import { images } from '@/data/assets'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 const FeaturedProviders = () => {
     return (
         <>
-            <section className="max-w-7xl mx-auto px-6">
+            <section className="max-w-5xl mx-auto px-6">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold">Featured Providers</h2>
                     <p className="text-gray-500 mt-2">
@@ -19,17 +20,17 @@ const FeaturedProviders = () => {
                             key={provider}
                             className="border rounded-2xl overflow-hidden hover:shadow-md transition"
                         >
-                            <div className=''>
+                            <Link href={`#`} className=''>
                                 <Image src={images.profile_picture} alt="Provider" />
-                            </div>
+                            </Link>
 
                             <div className="p-6">
                                 <h3 className="font-semibold">Provider Name</h3>
                                 <p className="text-gray-500 text-sm mt-1">Rawalpindi</p>
 
-                                <button className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-xl hover:bg-indigo-700">
+                                <Link href={`#`} className="mt-4 w-full inline-block bg-indigo-600 text-white py-2 rounded-xl hover:bg-indigo-700 text-center">
                                     View Profile
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     ))}
