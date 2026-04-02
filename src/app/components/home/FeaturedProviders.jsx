@@ -1,3 +1,5 @@
+import { images } from '@/data/assets'
+import Image from 'next/image'
 import React from 'react'
 
 const FeaturedProviders = () => {
@@ -17,7 +19,9 @@ const FeaturedProviders = () => {
                             key={provider}
                             className="border rounded-2xl overflow-hidden hover:shadow-md transition"
                         >
-                            <div className="h-40 bg-gray-200" />
+                            <div className=''>
+                                <Image src={images.profile_picture} alt="Provider" />
+                            </div>
 
                             <div className="p-6">
                                 <h3 className="font-semibold">Provider Name</h3>
