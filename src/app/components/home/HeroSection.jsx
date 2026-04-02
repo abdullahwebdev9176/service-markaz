@@ -1,6 +1,9 @@
+import { cities } from '@/data/cities'
 import React from 'react'
+import FormSubmitBtn from '../ui/FormSubmitBtn'
 
 const HeroSection = () => {
+
   return (
     <>
       <section className="bg-gradient-to-b from-slate-50 to-white py-20">
@@ -22,17 +25,15 @@ const HeroSection = () => {
 
             <select className="px-5 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
               <option>Select City</option>
-              <option>Rawalpindi</option>
-              <option>Islamabad</option>
-              <option>Lahore</option>
+              {cities.map((city, index) => (
+                <option key={index}>{city}</option>
+              ))}
             </select>
 
-            <button className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700">
-              Search
-            </button>
+            <FormSubmitBtn title="Search" />
           </div>
         </div>
-      </section>
+      </section> 
     </>
   )
 }
