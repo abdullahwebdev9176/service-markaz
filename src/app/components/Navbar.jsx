@@ -1,23 +1,26 @@
-import React from 'react'
+'use client'
+import React, { useState } from 'react'
+import { Menu, X, Layers, Plus, MapPin, LogIn } from 'lucide-react'
 
-const navbar = () => {
+const Navbar = () => {
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen)
+    }
+
+    const closeMenu = () => {
+        setIsMenuOpen(false)
+    }
+
     return (
         <>
-            <header>
-                <nav className="
-    flex flex-wrap
-    items-center
-    justify-between
-    w-full
-    py-4
-    md:py-0
-    px-4
-    text-lg text-gray-700
-    bg-white
-  ">
-                    <div>
-                        <a href="/">
-                            <svg xmlns="http://www.w3.org/2000/svg" width={150} height="32.125" viewBox="0 0 150 32.125">
+            <header className="bg-white shadow-md sticky top-0 z-50">
+                <nav className="flex flex-wrap items-center justify-between w-full py-4 px-4 md:px-8">
+                    {/* Logo */}
+                    <div className="flex-shrink-0">
+                        <a href="/" onClick={closeMenu}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width={120} height="26" viewBox="0 0 150 32.125">
                                 <g id="Group_330" data-name="Group 330" transform="translate(-251.1 457.654)">
                                     <g id="Group_329" data-name="Group 329" transform="translate(251.1 -457.654)">
                                         <path id="Path_121" data-name="Path 121" d="M257.887-454.034a12.084,12.084,0,0,1,3.505-3.62,11.811,11.811,0,0,1,3.46,3.549,17.887,17.887,0,0,1,3.362,11.216c.73.589,1.482,1.154,2.2,1.754a3.969,3.969,0,0,1,1.266,3.659c-.347,1.672-.679,3.347-1.045,5.015a1.393,1.393,0,0,1-2.12.7c-1.178-.946-2.326-1.925-3.5-2.872a5.373,5.373,0,0,1-3.316,1.44,5.365,5.365,0,0,1-3.882-1.4c-.844.621-1.628,1.367-2.453,2.033a6.315,6.315,0,0,1-1.2.924,1.393,1.393,0,0,1-1.839-.9c-.377-1.631-.771-3.257-1.136-4.89a3.96,3.96,0,0,1,1.335-3.81c.641-.517,1.29-1.025,1.943-1.527.182-.092.091-.3.1-.46a17.915,17.915,0,0,1,3.326-10.806m1.156,5.049a2.748,2.748,0,0,0,.24,3.641,3.024,3.024,0,0,0,4.134.085,2.75,2.75,0,0,0,.729-3.021,2.924,2.924,0,0,0-2.454-1.825,2.984,2.984,0,0,0-2.65,1.119" transform="translate(-251.1 457.654)" fill="#764abc" />
@@ -29,35 +32,109 @@ const navbar = () => {
                             </svg>
                         </a>
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" id="menu-button" className="h-6 w-6 cursor-pointer md:hidden block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                    <div className="hidden w-full md:flex md:items-center md:w-auto" id="menu">
-                        <ul className="
-        pt-4
-        text-base text-gray-700
-        md:flex
-        md:justify-between 
-        md:pt-0">
+
+                    {/* Mobile Menu Button */}
+                    <button
+                        onClick={toggleMenu}
+                        className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-purple-100 transition-colors"
+                        aria-label="Toggle menu"
+                    >
+                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+
+                    {/* Desktop Navigation */}
+                    <div className="hidden md:flex md:items-center">
+                        <ul className="flex gap-2">
                             <li>
-                                <a className="md:p-4 py-2 block hover:text-purple-400" href="/categories">Categories</a>
+                                <a
+                                    className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-purple-500 transition-colors rounded-lg hover:bg-purple-50"
+                                    href="/categories"
+                                >
+                                    <Layers size={18} />
+                                    <span>Categories</span>
+                                </a>
                             </li>
                             <li>
-                                <a className="md:p-4 py-2 block hover:text-purple-400" href="/add-business">Add Business</a>
+                                <a
+                                    className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-purple-500 transition-colors rounded-lg hover:bg-purple-50"
+                                    href="/add-business"
+                                >
+                                    <Plus size={18} />
+                                    <span>Add Business</span>
+                                </a>
                             </li>
                             <li>
-                                <a className="md:p-4 py-2 block hover:text-purple-400" href="/cities">Cities</a>
+                                <a
+                                    className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-purple-500 transition-colors rounded-lg hover:bg-purple-50"
+                                    href="/cities"
+                                >
+                                    <MapPin size={18} />
+                                    <span>Cities</span>
+                                </a>
                             </li>
                             <li>
-                                <a className="md:p-4 py-2 block hover:text-purple-400 text-purple-500" href="/sign-up">Sign Up</a>
+                                <a
+                                    className="flex items-center gap-2 px-4 py-2 text-white bg-purple-500 hover:bg-purple-600 transition-colors rounded-lg font-medium"
+                                    href="/sign-up"
+                                >
+                                    <LogIn size={18} />
+                                    <span>Sign Up</span>
+                                </a>
                             </li>
                         </ul>
                     </div>
+
+                    {/* Mobile Navigation Menu */}
+                    {isMenuOpen && (
+                        <div className="w-full md:hidden bg-white border-t border-gray-200 mt-4">
+                            <ul className="flex flex-col">
+                                <li>
+                                    <a
+                                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-purple-500 hover:bg-purple-50 transition-colors border-b border-gray-100"
+                                        href="/categories"
+                                        onClick={closeMenu}
+                                    >
+                                        <Layers size={20} />
+                                        <span className="font-medium">Categories</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-purple-500 hover:bg-purple-50 transition-colors border-b border-gray-100"
+                                        href="/add-business"
+                                        onClick={closeMenu}
+                                    >
+                                        <Plus size={20} />
+                                        <span className="font-medium">Add Business</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-purple-500 hover:bg-purple-50 transition-colors border-b border-gray-100"
+                                        href="/cities"
+                                        onClick={closeMenu}
+                                    >
+                                        <MapPin size={20} />
+                                        <span className="font-medium">Cities</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        className="flex items-center gap-3 px-4 py-3 m-3 text-white bg-purple-500 hover:bg-purple-600 transition-colors rounded-lg font-medium justify-center"
+                                        href="/sign-up"
+                                        onClick={closeMenu}
+                                    >
+                                        <LogIn size={20} />
+                                        <span>Sign Up</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    )}
                 </nav>
             </header>
-
         </>
     )
 }
 
-export default navbar
+export default Navbar
