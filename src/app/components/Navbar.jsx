@@ -16,7 +16,7 @@ const navbar = () => {
     bg-white
   ">
                     <div>
-                        <a href="#">
+                        <a href="/">
                             <svg xmlns="http://www.w3.org/2000/svg" width={150} height="32.125" viewBox="0 0 150 32.125">
                                 <g id="Group_330" data-name="Group 330" transform="translate(-251.1 457.654)">
                                     <g id="Group_329" data-name="Group 329" transform="translate(251.1 -457.654)">
@@ -43,7 +43,7 @@ const navbar = () => {
                                 <a className="md:p-4 py-2 block hover:text-purple-400" href="/categories">Categories</a>
                             </li>
                             <li>
-                                <a className="md:p-4 py-2 block hover:text-purple-400" href="/add-service">Add Service</a>
+                                <a className="md:p-4 py-2 block hover:text-purple-400" href="/add-business">Add Business</a>
                             </li>
                             <li>
                                 <a className="md:p-4 py-2 block hover:text-purple-400" href="/cities">Cities</a>
