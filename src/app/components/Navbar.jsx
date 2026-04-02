@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import { Menu, X, Layers, Plus, MapPin, LogIn } from 'lucide-react'
+import Link from 'next/link'
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -19,7 +20,7 @@ const Navbar = () => {
                 <nav className="flex flex-wrap items-center justify-between w-full py-4 px-4 md:px-8">
                     {/* Logo */}
                     <div className="flex-shrink-0">
-                        <a href="/" onClick={closeMenu}>
+                        <Link href="/" onClick={closeMenu}>
                             <svg xmlns="http://www.w3.org/2000/svg" width={120} height="26" viewBox="0 0 150 32.125">
                                 <g id="Group_330" data-name="Group 330" transform="translate(-251.1 457.654)">
                                     <g id="Group_329" data-name="Group 329" transform="translate(251.1 -457.654)">
@@ -30,7 +31,7 @@ const Navbar = () => {
                                     </g>
                                 </g>
                             </svg>
-                        </a>
+                        </Link>
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -46,40 +47,40 @@ const Navbar = () => {
                     <div className="hidden md:flex md:items-center">
                         <ul className="flex gap-2">
                             <li>
-                                <a
+                                <Link
                                     className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-purple-500 transition-colors rounded-lg hover:bg-purple-50"
                                     href="/categories"
                                 >
                                     <Layers size={18} />
                                     <span>Categories</span>
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a
+                                <Link
                                     className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-purple-500 transition-colors rounded-lg hover:bg-purple-50"
                                     href="/add-business"
                                 >
                                     <Plus size={18} />
                                     <span>Add Business</span>
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a
+                                <Link
                                     className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-purple-500 transition-colors rounded-lg hover:bg-purple-50"
                                     href="/cities"
                                 >
                                     <MapPin size={18} />
                                     <span>Cities</span>
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a
+                                <Link
                                     className="flex items-center gap-2 px-4 py-2 text-white bg-purple-500 hover:bg-purple-600 transition-colors rounded-lg font-medium"
                                     href="/sign-up"
                                 >
                                     <LogIn size={18} />
                                     <span>Sign Up</span>
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </div>
@@ -89,44 +90,44 @@ const Navbar = () => {
                         <div className="w-full md:hidden bg-white border-t border-gray-200 mt-4">
                             <ul className="flex flex-col">
                                 <li>
-                                    <a
+                                    <Link
                                         className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-purple-500 hover:bg-purple-50 transition-colors border-b border-gray-100"
                                         href="/categories"
                                         onClick={closeMenu}
                                     >
                                         <Layers size={20} />
                                         <span className="font-medium">Categories</span>
-                                    </a>
+                                    </Link>
                                 </li>
                                 <li>
-                                    <a
+                                    <Link
                                         className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-purple-500 hover:bg-purple-50 transition-colors border-b border-gray-100"
                                         href="/add-business"
                                         onClick={closeMenu}
                                     >
                                         <Plus size={20} />
                                         <span className="font-medium">Add Business</span>
-                                    </a>
+                                    </Link>
                                 </li>
                                 <li>
-                                    <a
+                                    <Link
                                         className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-purple-500 hover:bg-purple-50 transition-colors border-b border-gray-100"
                                         href="/cities"
                                         onClick={closeMenu}
                                     >
                                         <MapPin size={20} />
                                         <span className="font-medium">Cities</span>
-                                    </a>
+                                    </Link>
                                 </li>
                                 <li>
-                                    <a
+                                    <Link
                                         className="flex items-center gap-3 px-4 py-3 m-3 text-white bg-purple-500 hover:bg-purple-600 transition-colors rounded-lg font-medium justify-center"
                                         href="/sign-up"
                                         onClick={closeMenu}
                                     >
                                         <LogIn size={20} />
                                         <span>Sign Up</span>
-                                    </a>
+                                    </Link>
                                 </li>
                             </ul>
                         </div>
