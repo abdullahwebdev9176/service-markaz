@@ -1,6 +1,8 @@
 import { cities } from '@/data/cities'
 import React from 'react'
 import FormSubmitBtn from '../ui/FormSubmitBtn'
+import InputField from '../Form/InputField'
+import SelectBox from '../Form/SelectBox'
 
 const HeroSection = () => {
 
@@ -17,20 +19,11 @@ const HeroSection = () => {
           </p>
 
           <div className="mt-8 flex flex-col md:flex-row gap-4 justify-center">
-            <input
-              type="text"
-              placeholder="What service do you need?"
-              className="px-5 py-3 w-full md:w-96 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-
-            <select className="px-5 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
-              <option>Select City</option>
-              {cities.map((city, index) => (
-                <option key={index}>{city}</option>
-              ))}
-            </select>
-
+            
+            <InputField placeholder="Enter your city" type="text" />
+            <SelectBox options={cities} placeholder="Select City" />
             <FormSubmitBtn title="Search" />
+
           </div>
         </div>
       </section> 
