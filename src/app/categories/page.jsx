@@ -81,12 +81,12 @@ export default function CategoriesPage() {
         <div className="max-w-4xl mx-auto px-6 text-center">
 
           <SectionHeading
-            title="Why choose ServiceMarkaz?"
+            title="Why choose Service Markaz?"
             subtitle="Connect with reliable professionals quickly and easily"
           />
 
           <p className="text-gray-600">
-            ServiceMarkaz helps you explore trusted service providers in your
+            Service Markaz helps you explore trusted service providers in your
             area, compare options, and contact professionals directly without
             hassle.
           </p>

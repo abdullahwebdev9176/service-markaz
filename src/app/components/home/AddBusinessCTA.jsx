@@ -12,7 +12,7 @@ const AddBusinessCTA = () => {
                         </h2>
 
                         <p className="mt-4 text-indigo-100">
-                            Join ServiceMarkaz today and grow your business
+                            Join Service Markaz today and grow your business
                         </p>
 
                         <Link href="/add-business" className="inline-block mt-6 px-8 py-3 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-gray-100">

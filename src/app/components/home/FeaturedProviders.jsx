@@ -20,7 +20,7 @@ const FeaturedProviders = () => {
                             key={provider}
                             className="border rounded-2xl overflow-hidden hover:shadow-md transition"
                         >
-                            <Link href={`#`} className=''>
+                            <Link href='/add-business' className=''>
                                 <Image src={images.profile_picture} alt="Provider" />
                             </Link>
 
