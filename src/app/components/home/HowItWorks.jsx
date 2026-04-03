@@ -11,7 +11,7 @@ const HowItWorks = () => {
     <>
       <section className="bg-slate-50 py-20">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-12">How Service Markaz Works</h2>
+          <h2 className="text-3xl font-bold mb-10 text-gray-900">How Service Markaz Works</h2>
 
             <div className="grid md:grid-cols-3 gap-8">
               {steps.map((step, index) => (

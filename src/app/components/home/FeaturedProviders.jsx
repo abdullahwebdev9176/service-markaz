@@ -8,7 +8,7 @@ const FeaturedProviders = () => {
         <>
             <section className="max-w-5xl mx-auto px-6">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold">Featured Providers</h2>
+                    <h2 className="text-3xl font-bold text-gray-900">Featured Providers</h2>
                     <p className="text-gray-500 mt-2">
                         Top rated professionals in your city
                     </p>
@@ -25,7 +25,7 @@ const FeaturedProviders = () => {
                             </Link>
 
                             <div className="p-6">
-                                <h3 className="font-semibold">Provider Name</h3>
+                                <h3 className="font-semibold text-gray-900">Provider Name</h3>
                                 <p className="text-gray-500 text-sm mt-1">Rawalpindi</p>
 
                                 <Link href={`#`} className="mt-4 w-full inline-block bg-indigo-600 text-white py-2 rounded-xl hover:bg-indigo-700 text-center">
