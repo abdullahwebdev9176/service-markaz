@@ -52,7 +52,7 @@ export async function POST(request) {
             email,
             phone,
             password: hashedPassword,
-            favoriteGame: favoriteGame.toLowerCase(),
+            favoriteGame: favoriteGame,
         });
 
         // console.log("New user created:", newUser);
