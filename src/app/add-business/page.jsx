@@ -76,7 +76,7 @@ export default function AddServicePage() {
         subtitle="Grow your business by reaching customers in your city. List your service in just a few minutes."
       />
 
-      <section className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 pb-12 pt-5">
 
         <div className="text-center mb-10">
           <h2 className="text-2xl font-bold text-gray-800">Business Registration Form</h2>
