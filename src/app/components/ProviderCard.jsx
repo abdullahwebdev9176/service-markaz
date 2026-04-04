@@ -1,12 +1,14 @@
 import React from "react";
 import Link from "next/link";
 import { Star, CheckCircle, Clock, MapPin } from "lucide-react";
+import { getProviderSlug } from "@/utils/slug";
 
 const ProviderCard = ({ provider }) => {
   const { id, name, image, rating, reviews, category, experience, availability, responseTime, verification, city } = provider;
+  const providerSlug = getProviderSlug(provider);
 
   return (
-    <Link href={`/provider/${id}`}>
+    <Link href={`/provider/${providerSlug}`}>
       <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition cursor-pointer">
         {/* Provider Image */}
         <div className="w-full h-48 overflow-hidden bg-gray-300">

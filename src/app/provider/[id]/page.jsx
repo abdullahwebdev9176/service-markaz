@@ -1,4 +1,5 @@
 import { providers } from "@/data/providers";
+import { findProviderBySlug } from "@/utils/slug";
 import { Star, CheckCircle, Clock, MapPin, Phone, MessageCircle, Mail } from "lucide-react";
 
 const ProfileHeader = ({ provider }) => (
@@ -215,7 +216,9 @@ const ContactSection = ({ provider }) => (
 
 const page = async ({ params }) => {
   const { id } = await params;
-  const provider = providers.find((p) => p.id === parseInt(id));
+  
+  // Find provider using slug (format: "name-area-city")
+  const provider = findProviderBySlug(id, providers);
 
   if (!provider) {
     return (
