@@ -11,6 +11,7 @@ export async function signIn({ email, password }) {
     throw new Error(json.message || "Sign in failed");
   }
 
+  // json.data = { user: {...}, token: "..." }
   return json.data;
 }
 
