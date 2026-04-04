@@ -52,8 +52,10 @@ export async function POST(request) {
             email,
             phone,
             password: hashedPassword,
-            favoriteGame: favoriteGame.trim().toLowerCase(),
+            favoriteGame: favoriteGame.toLowerCase(),
         });
+
+        // console.log("New user created:", newUser);
 
         const token = jwt.sign(
             { id: newUser._id, email: newUser.email, role: newUser.role },
@@ -71,6 +73,7 @@ export async function POST(request) {
                     name: newUser.name,
                     email: newUser.email,
                     phone: newUser.phone,
+                    favoriteGame: newUser.favoriteGame,
                     role: newUser.role,
                 },
             },
