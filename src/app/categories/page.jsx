@@ -1,27 +1,10 @@
 import Link from "next/link";
-import {
-  Wrench,
-  Zap,
-  BookOpen,
-  Scissors,
-  Brush,
-  Hammer,
-  Snowflake
-} from "lucide-react";
+import { categories } from "@/data/categories";
 
 import SectionHeading from "../components/ui/SectionHeading";
-import PrimaryBtn from "../components/ui/PrimaryBtn";
+import CategoriesGrid from "../components/CategoriesGrid";
 import IntroSection from "../components/ui/IntroSection";
-
-const categories = [
-  { name: "Electricians", icon: Zap },
-  { name: "Plumbers", icon: Wrench },
-  { name: "AC Repair", icon: Snowflake },
-  { name: "Carpenters", icon: Hammer },
-  { name: "Home Cleaning", icon: Brush },
-  { name: "Tutors", icon: BookOpen },
-  { name: "Tailors", icon: Scissors },
-];
+import PrimaryBtn from "../components/ui/PrimaryBtn";
 
 const introTitle = "Browse Service Categories";
 const introSubtitle =
@@ -46,31 +29,7 @@ export default function CategoriesPage() {
           subtitle="Browse through our most popular service categories"
         />
 
-        <div className="flex flex-wrap justify-center gap-6">
-
-          {categories.map((category, index) => {
-            const Icon = category.icon;
-
-            return (
-              <Link
-                key={index}
-                href={`/categories/${category.name.toLowerCase()}`}
-                className="w-[45%] sm:w-[30%] md:w-[22%] lg:w-[18%] bg-white border border-gray-200 shadow-sm rounded-xl p-6 text-center hover:shadow-md hover:-translate-y-1 transition"
-              >
-                <Icon
-                  size={40}
-                  className="mx-auto text-blue-600"
-                />
-
-                <p className="mt-3 font-medium text-gray-700">
-                  {category.name}
-                </p>
-
-              </Link>
-            );
-          })}
-
-        </div>
+        <CategoriesGrid categories={categories} />
 
       </section>
 

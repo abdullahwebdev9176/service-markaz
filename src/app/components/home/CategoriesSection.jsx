@@ -1,6 +1,7 @@
 import { categories } from '@/data/categories'
 import React from 'react'
 import SectionHeading from '../ui/SectionHeading'
+import CategoriesGrid from '../CategoriesGrid'
 
 const CategoriesSection = () => {
   return (
@@ -14,16 +15,7 @@ const CategoriesSection = () => {
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto flex flex-wrap gap-6 justify-center">
-          {categories.map((service, index) => (
-            <div
-              key={index}
-              className="p-6 border border-gray-500 rounded-2xl hover:shadow-md transition cursor-pointer text-center"
-            >
-              <h3 className="font-semibold">{service.name}</h3>
-            </div>
-          ))}
-        </div>
+        <CategoriesGrid categories={categories} />
       </section>
 
     </>
