@@ -51,15 +51,15 @@ const Navbar = () => {
                                 </Link>
                             </li>
                             {user && (
-                            <li>
-                                <Link
-                                    className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-purple-500 transition-colors rounded-lg hover:bg-purple-50"
-                                    href="/add-business"
-                                >
-                                    <Plus size={18} />
-                                    <span>Add Business</span>
-                                </Link>
-                            </li>
+                                <li>
+                                    <Link
+                                        className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-purple-500 transition-colors rounded-lg hover:bg-purple-50"
+                                        href="/add-business"
+                                    >
+                                        <Plus size={18} />
+                                        <span>Add Business</span>
+                                    </Link>
+                                </li>
                             )}
                             <li>
                                 <Link
@@ -83,14 +83,15 @@ const Navbar = () => {
                                 <>
                                     <li>
                                         <Link
-                                            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-purple-500 transition-colors rounded-lg hover:bg-purple-50 font-medium"
+                                            className="flex items-center gap-2 px-4 py-2 text-white bg-purple-500 hover:bg-purple-600 transition-colors rounded-lg font-medium"
                                             href="/sign-in"
                                         >
                                             <LogIn size={18} />
                                             <span>Sign In</span>
                                         </Link>
                                     </li>
-                                    <li>
+
+                                    {/* <li>
                                         <Link
                                             className="flex items-center gap-2 px-4 py-2 text-white bg-purple-500 hover:bg-purple-600 transition-colors rounded-lg font-medium"
                                             href="/sign-up"
@@ -98,7 +99,7 @@ const Navbar = () => {
                                             <UserPlus size={18} />
                                             <span>Sign Up</span>
                                         </Link>
-                                    </li>
+                                    </li> */}
                                 </>
                             ) : (
                                 <li>
@@ -111,6 +112,18 @@ const Navbar = () => {
                                     </button>
                                 </li>
                             )}
+
+                            {user && user?.role === "admin" && (
+                                <li>
+                                    <Link
+                                        className="flex items-center gap-2 px-4 py-2 text-white bg-purple-500 hover:bg-purple-600 transition-colors rounded-lg font-medium"
+                                        href="/admin"
+                                    >
+                                        <MessageSquare size={18} />
+                                        <span>Admin</span>
+                                    </Link>
+                                </li>
+                                )}
                         </ul>
                     </div>
 
@@ -129,16 +142,16 @@ const Navbar = () => {
                                     </Link>
                                 </li>
                                 {user && (
-                                <li>
-                                    <Link
-                                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-purple-500 hover:bg-purple-50 transition-colors border-b border-gray-100"
-                                        href="/add-business"
-                                        onClick={closeMenu}
-                                    >
-                                        <Plus size={20} />
-                                        <span className="font-medium">Add Business</span>
-                                    </Link>
-                                </li>
+                                    <li>
+                                        <Link
+                                            className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-purple-500 hover:bg-purple-50 transition-colors border-b border-gray-100"
+                                            href="/add-business"
+                                            onClick={closeMenu}
+                                        >
+                                            <Plus size={20} />
+                                            <span className="font-medium">Add Business</span>
+                                        </Link>
+                                    </li>
                                 )}
                                 <li>
                                     <Link
