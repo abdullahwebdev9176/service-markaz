@@ -39,6 +39,13 @@ const userSchema = new mongoose.Schema(
             enum: ["pending", "active", "blocked"],
             default: "pending",
         },
+
+        favoriteGame: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true,
+        },
     },
     {
         timestamps: true,

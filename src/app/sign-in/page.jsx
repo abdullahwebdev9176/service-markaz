@@ -7,7 +7,7 @@ import InputField from "@/app/components/Form/InputField";
 import { useSignIn } from "@/app/hooks/useSignIn";
 
 export default function SignInPage() {
-  const { mutate: signIn, isPending, isError } = useSignIn();
+  const { mutate: signIn, isPending, isError, error } = useSignIn();
 
   const {
     register,
@@ -36,7 +36,7 @@ export default function SignInPage() {
           {/* Error Message */}
           {isError && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg text-center">
-              Invalid email or password. Please try again.
+              {error?.message || "Invalid email or password. Please try again."}
             </div>
           )}
 
@@ -78,6 +78,12 @@ export default function SignInPage() {
             >
               {isPending ? "Signing In..." : "Sign In"}
             </button>
+
+            <p className="text-center text-sm">
+              <Link href="/forgot-password" className="text-purple-600 hover:underline">
+                Forgot Password?
+              </Link>
+            </p>
           </form>
 
           {/* Sign Up Link */}

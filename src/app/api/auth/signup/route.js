@@ -8,11 +8,11 @@ export async function POST(request) {
     try {
         const body = await request.json();
 
-        const { firstName, lastName, email, phone, password } = body;
+        const { firstName, lastName, email, phone, password, favoriteGame } = body;
         const name = `${firstName ?? ""} ${lastName ?? ""}`.trim();
 
         // ---------- Validation ----------
-        if (!firstName || !lastName || !email || !phone || !password) {
+        if (!firstName || !lastName || !email || !phone || !password || !favoriteGame) {
             return NextResponse.json(
                 { success: false, message: "All fields are required" },
                 { status: 400 }
@@ -51,7 +51,8 @@ export async function POST(request) {
             name,
             email,
             phone,
-            password: hashedPassword
+            password: hashedPassword,
+            favoriteGame: favoriteGame.trim().toLowerCase(),
         });
 
         const token = jwt.sign(

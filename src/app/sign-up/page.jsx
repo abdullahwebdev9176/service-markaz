@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { User, Mail, Phone, Lock, UserPlus } from "lucide-react";
+import { User, Mail, Phone, Lock, UserPlus, Gamepad2 } from "lucide-react";
 import Link from "next/link";
 import InputField from "@/app/components/Form/InputField";
 import { useSignUp } from "@/app/hooks/useSignUp";
@@ -12,7 +12,7 @@ const phonePattern = {
 };
 
 export default function SignUpPage() {
-  const { mutate: signUp, isPending, isError, isSuccess } = useSignUp();
+  const { mutate: signUp, isPending, isError, isSuccess, error } = useSignUp();
 
   const {
     register,
@@ -53,7 +53,7 @@ export default function SignUpPage() {
           {/* Error Message */}
           {isError && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg text-center">
-              Something went wrong. Please try again.
+              {error?.message || "Something went wrong. Please try again."}
             </div>
           )}
 
@@ -127,6 +127,19 @@ export default function SignUpPage() {
                 },
               })}
               error={errors.password?.message}
+            />
+
+            {/* Favorite Game (Security Question) */}
+            <InputField
+              label="Favorite Game (Security Question)"
+              icon={Gamepad2}
+              placeholder="e.g. Counter Strike, FIFA, GTA"
+              hint="You'll need this to reset your password"
+              registration={register("favoriteGame", {
+                required: "Favorite game is required",
+                minLength: { value: 2, message: "At least 2 characters" },
+              })}
+              error={errors.favoriteGame?.message}
             />
 
             {/* Submit Button */}
