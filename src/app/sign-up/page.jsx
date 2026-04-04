@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { User, Mail, Phone, Lock, UserPlus } from "lucide-react";
 import Link from "next/link";
 import InputField from "@/app/components/Form/InputField";
+import { useSignUp } from "@/app/hooks/useSignUp";
 
 const phonePattern = {
   value: /^03[0-9]{9}$/,
@@ -12,7 +12,7 @@ const phonePattern = {
 };
 
 export default function SignUpPage() {
-  const [submitState, setSubmitState] = useState("idle");
+  const { mutate: signUp, isPending, isError, isSuccess } = useSignUp();
 
   const {
     register,
@@ -21,18 +21,7 @@ export default function SignUpPage() {
     reset,
   } = useForm();
 
-  const onSubmit = async (data) => {
-    setSubmitState("loading");
-    try {
-      // Replace with real API call
-      await new Promise((res) => setTimeout(res, 1500));
-      console.log("Sign Up Data:", data);
-      setSubmitState("success");
-      reset();
-    } catch {
-      setSubmitState("error");
-    }
-  };
+  const onSubmit = (data) => signUp(data, { onSuccess: () => reset() });
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
@@ -51,7 +40,7 @@ export default function SignUpPage() {
           </div>
 
           {/* Success Message */}
-          {submitState === "success" && (
+          {isSuccess && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg text-center">
               Account created successfully! You can now{" "}
               <Link href="/sign-in" className="font-semibold underline">
@@ -62,7 +51,7 @@ export default function SignUpPage() {
           )}
 
           {/* Error Message */}
-          {submitState === "error" && (
+          {isError && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg text-center">
               Something went wrong. Please try again.
             </div>
@@ -143,10 +132,10 @@ export default function SignUpPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={submitState === "loading"}
+              disabled={isPending}
               className="w-full py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
-              {submitState === "loading" ? "Creating Account..." : "Create Account"}
+              {isPending ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 

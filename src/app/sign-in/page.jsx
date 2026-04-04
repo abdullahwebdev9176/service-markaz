@@ -1,17 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Mail, Lock, LogIn } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import InputField from "@/app/components/Form/InputField";
-import { useAuth } from "@/app/context/AuthContext";
+import { useSignIn } from "@/app/hooks/useSignIn";
 
 export default function SignInPage() {
-  const [submitState, setSubmitState] = useState("idle");
-  const { login } = useAuth();
-  const router = useRouter();
+  const { mutate: signIn, isPending, isError } = useSignIn();
 
   const {
     register,
@@ -19,17 +15,7 @@ export default function SignInPage() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
-    setSubmitState("loading");
-    try {
-      // Replace with real API call
-      await new Promise((res) => setTimeout(res, 1500));
-      login({ email: data.email });
-      router.push("/");
-    } catch {
-      setSubmitState("error");
-    }
-  };
+  const onSubmit = (data) => signIn(data);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
@@ -48,7 +34,7 @@ export default function SignInPage() {
           </div>
 
           {/* Error Message */}
-          {submitState === "error" && (
+          {isError && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg text-center">
               Invalid email or password. Please try again.
             </div>
@@ -87,10 +73,10 @@ export default function SignInPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={submitState === "loading"}
+              disabled={isPending}
               className="w-full py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
-              {submitState === "loading" ? "Signing In..." : "Sign In"}
+              {isPending ? "Signing In..." : "Sign In"}
             </button>
           </form>
 
