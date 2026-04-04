@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import { Menu, X, Layers, Plus, MapPin, LogIn } from 'lucide-react'
+import { Menu, X, Layers, Plus, MapPin, LogIn, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { images } from '@/data/assets'
 import Image from 'next/image'
@@ -68,6 +68,15 @@ const Navbar = () => {
                             </li>
                             <li>
                                 <Link
+                                    className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-purple-500 transition-colors rounded-lg hover:bg-purple-50"
+                                    href="/contact-us"
+                                >
+                                    <MessageSquare size={18} />
+                                    <span>Contact Us</span>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
                                     className="flex items-center gap-2 px-4 py-2 text-white bg-purple-500 hover:bg-purple-600 transition-colors rounded-lg font-medium"
                                     href="/sign-up"
                                 >
@@ -110,6 +119,16 @@ const Navbar = () => {
                                     >
                                         <MapPin size={20} />
                                         <span className="font-medium">Cities</span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-purple-500 hover:bg-purple-50 transition-colors border-b border-gray-100"
+                                        href="/contact-us"
+                                        onClick={closeMenu}
+                                    >
+                                        <MessageSquare size={20} />
+                                        <span className="font-medium">Contact Us</span>
                                     </Link>
                                 </li>
                                 <li>
