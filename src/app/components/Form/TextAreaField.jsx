@@ -1,6 +1,6 @@
 import { AlertCircle } from "lucide-react";
 
-const InputField = ({ label, icon: Icon, placeholder, type = "text", registration, error, hint }) => {
+const TextAreaField = ({ label, icon: Icon, placeholder, rows = 4, registration, error, hint }) => {
   return (
     <div>
       {label && (
@@ -9,11 +9,11 @@ const InputField = ({ label, icon: Icon, placeholder, type = "text", registratio
           {label}
         </label>
       )}
-      <input
-        type={type}
+      <textarea
+        rows={rows}
         placeholder={placeholder}
         {...registration}
-        className={`w-full px-4 py-3 text-sm border rounded-lg outline-none transition focus:ring-2 ${
+        className={`w-full px-4 py-3 text-sm border rounded-lg outline-none transition focus:ring-2 resize-none ${
           error
             ? "border-red-400 focus:ring-red-300 bg-red-50"
             : "border-gray-200 focus:ring-blue-500 focus:border-blue-400"
@@ -30,4 +30,4 @@ const InputField = ({ label, icon: Icon, placeholder, type = "text", registratio
   );
 };
 
-export default InputField;
+export default TextAreaField;
