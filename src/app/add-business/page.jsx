@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import {
   User, Briefcase, MapPin, Phone, MessageCircle, Mail,
   Tag, Building2, Clock, DollarSign, CheckCircle, Upload,
   Loader2, Send, Wrench, Shield, Award, TrendingUp, Users, Zap, Star,
-  AlertCircle,
+  AlertCircle, Image as ImageIcon, X,
 } from "lucide-react";
 import IntroSection from "../components/ui/IntroSection";
 import SectionHeading from "../components/ui/SectionHeading";
@@ -17,6 +18,10 @@ import FormSection from "../components/Form/FormSection";
 import DynamicListField from "../components/Form/DynamicListField";
 import { cities } from "@/data/cities";
 import { categories } from "@/data/categories";
+import { useAuth } from "@/app/context/AuthContext";
+import { useAddBusiness } from "@/app/hooks/useAddBusiness";
+import { useImageUpload } from "@/app/hooks/useImageUpload";
+import { useBusiness } from "@/app/hooks/useBusiness";
 
 const categoryOptions = categories.map((c) => ({ label: c.name, value: c.slug }));
 const cityOptions = cities.map((c) => ({ label: c, value: c }));
@@ -40,10 +45,105 @@ const phonePattern = {
   message: "Enter valid Pakistani number (03XXXXXXXXX)",
 };
 
-export default function AddServicePage() {
-  const [submitState, setSubmitState] = useState("idle");
+// ─── Reusable image upload widget ────────────────────────────────────────────
+function ImageUploadField({ label, hint, aspectClass, onUpload, previewUrl, isLoading, error }) {
+  const inputRef = useRef(null);
 
-  const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
+  const handleChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) onUpload(file);
+    e.target.value = "";
+  };
+
+  return (
+    <div>
+      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+        <ImageIcon size={14} className="text-blue-500" />
+        {label}
+      </label>
+
+      {previewUrl ? (
+        <div className={`relative w-full ${aspectClass} rounded-xl overflow-hidden border border-gray-200 group`}>
+          <img src={previewUrl} alt={label} className="w-full h-full object-cover" />
+          <button
+            type="button"
+            onClick={() => { onUpload(null); if (inputRef.current) inputRef.current.value = ""; }}
+            className="absolute top-2 right-2 bg-white/90 hover:bg-white text-gray-600 hover:text-red-500 rounded-full p-1 shadow transition opacity-0 group-hover:opacity-100"
+          >
+            <X size={14} />
+          </button>
+          <div className="absolute bottom-2 right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+            <CheckCircle size={11} /> Uploaded
+          </div>
+        </div>
+      ) : (
+        <label
+          className={`flex flex-col items-center justify-center w-full ${aspectClass} border-2 border-dashed rounded-xl cursor-pointer transition ${
+            isLoading ? "border-blue-300 bg-blue-50" : "border-gray-300 hover:border-blue-400 hover:bg-blue-50"
+          }`}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 size={22} className="text-blue-500 animate-spin mb-1" />
+              <p className="text-sm text-blue-600 font-medium">Uploading…</p>
+            </>
+          ) : (
+            <>
+              <Upload size={22} className="text-gray-400 mb-1" />
+              <p className="text-sm text-gray-500 font-medium">Click to upload</p>
+              <p className="text-xs text-gray-400 mt-0.5">{hint}</p>
+            </>
+          )}
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={handleChange}
+            disabled={isLoading}
+          />
+        </label>
+      )}
+
+      {error && (
+        <p className="flex items-center gap-1 mt-1.5 text-xs text-red-500">
+          <AlertCircle size={12} /> {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
+export default function AddBusinessPage() {
+  const { token } = useAuth();
+  const router = useRouter();
+
+  const [profileImageUrl, setProfileImageUrl] = useState("");
+  const [bannerImageUrl, setBannerImageUrl] = useState("");
+  const [profileImageError, setProfileImageError] = useState("");
+
+  const addBusiness = useAddBusiness();
+  const profileUpload = useImageUpload("service-markaz/profiles");
+  const bannerUpload = useImageUpload("service-markaz/banners");
+
+  // Redirect if user already has a business
+  const { data: existingBusiness, isLoading: checkingBusiness } = useBusiness();
+
+  useEffect(() => {
+    if (!token && !checkingBusiness) router.replace("/sign-in");
+  }, [token, checkingBusiness, router]);
+
+  useEffect(() => {
+    if (existingBusiness) router.replace("/provider-profile");
+  }, [existingBusiness, router]);
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       services: [{ value: "" }],
       serviceAreas: [{ value: "" }],
@@ -55,18 +155,63 @@ export default function AddServicePage() {
   const serviceAreas = useFieldArray({ control, name: "serviceAreas" });
   const specializations = useFieldArray({ control, name: "specializations" });
 
-  const onSubmit = async (data) => {
-    setSubmitState("loading");
-    try {
-      // Dummy API — replace with real endpoint later
-      await new Promise((res) => setTimeout(res, 1800));
-      console.log("Submitted:", data);
-      setSubmitState("success");
-      reset();
-    } catch {
-      setSubmitState("error");
-    }
+  const handleProfileUpload = (file) => {
+    if (!file) { setProfileImageUrl(""); return; }
+    setProfileImageError("");
+    profileUpload.mutate(file, {
+      onSuccess: (url) => setProfileImageUrl(url),
+      onError: (err) => setProfileImageError(err.message),
+    });
   };
+
+  const handleBannerUpload = (file) => {
+    if (!file) { setBannerImageUrl(""); return; }
+    bannerUpload.mutate(file, {
+      onSuccess: (url) => setBannerImageUrl(url),
+    });
+  };
+
+  const onSubmit = (data) => {
+    if (!profileImageUrl) {
+      setProfileImageError("Profile photo is required");
+      return;
+    }
+    addBusiness.mutate({
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      whatsapp: data.whatsapp,
+      title: data.title,
+      category: data.category,
+      city: data.city,
+      area: data.area,
+      about: data.about,
+      services: data.services.map((s) => s.value).filter(Boolean),
+      experience: data.experience,
+      completedProjects: data.completedProjects,
+      specializations: data.specializations.map((s) => s.value).filter(Boolean),
+      serviceAreas: data.serviceAreas.map((s) => s.value).filter(Boolean),
+      pricing: {
+        calloutFee: data.calloutFee,
+        hourlyRate: data.hourlyRate,
+        minCharge: data.minCharge,
+      },
+      availability: data.availability,
+      responseTime: data.responseTime,
+      profileImage: profileImageUrl,
+      bannerImage: bannerImageUrl,
+    });
+  };
+
+  if (!token || checkingBusiness) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 size={32} className="animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
+  const isSubmitting = addBusiness.isPending;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -86,19 +231,19 @@ export default function AddServicePage() {
         </div>
 
         {/* Success / Error banners */}
-        {submitState === "success" && (
+        {addBusiness.isSuccess && (
           <div className="flex items-center gap-3 bg-green-50 border border-green-200 text-green-700 rounded-xl px-5 py-4 mb-8">
             <CheckCircle size={22} className="flex-shrink-0 text-green-500" />
             <div>
               <p className="font-semibold">Business submitted successfully!</p>
-              <p className="text-sm text-green-600">We will review and publish your listing within 24 hours.</p>
+              <p className="text-sm text-green-600">Redirecting to your profile…</p>
             </div>
           </div>
         )}
-        {submitState === "error" && (
+        {addBusiness.isError && (
           <div className="flex items-center gap-3 bg-red-50 border border-red-200 text-red-700 rounded-xl px-5 py-4 mb-8">
             <AlertCircle size={22} className="flex-shrink-0" />
-            <p className="font-semibold">Something went wrong. Please try again.</p>
+            <p className="font-semibold">{addBusiness.error?.message || "Something went wrong. Please try again."}</p>
           </div>
         )}
 
@@ -309,8 +454,8 @@ export default function AddServicePage() {
             </div>
           </FormSection>
 
-          {/* 7 — Availability & Media */}
-          <FormSection icon={CheckCircle} title="Availability & Media" subtitle="When are you available?">
+          {/* 7 — Availability & Scheduling */}
+          <FormSection icon={CheckCircle} title="Availability & Scheduling" subtitle="When are you available?">
             <div className="grid sm:grid-cols-2 gap-5">
               <SelectBox
                 label="Availability Status *"
@@ -329,22 +474,35 @@ export default function AddServicePage() {
                 error={errors.responseTime?.message}
               />
             </div>
-
-            {/* Photo Upload */}
-            <div>
-              <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                <Upload size={14} className="text-blue-500" /> Profile Photo
-              </label>
-              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition group">
-                <Upload size={22} className="text-gray-400 group-hover:text-blue-500 mb-1 transition" />
-                <p className="text-sm text-gray-500 group-hover:text-blue-600 font-medium">Click to upload photo</p>
-                <p className="text-xs text-gray-400 mt-1">JPG, PNG up to 5MB</p>
-                <input {...register("image")} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" />
-              </label>
-            </div>
           </FormSection>
 
-          {/* 8 — Terms */}
+          {/* 8 — Images */}
+          <FormSection
+            icon={ImageIcon}
+            title="Profile & Banner Images"
+            subtitle="Images auto-convert to WebP for fast loading"
+          >
+            <ImageUploadField
+              label="Profile Photo *"
+              hint="JPG or PNG · up to 5 MB · auto-converted to WebP"
+              aspectClass="h-40"
+              previewUrl={profileImageUrl}
+              isLoading={profileUpload.isPending}
+              error={profileImageError || (profileUpload.isError ? profileUpload.error?.message : "")}
+              onUpload={handleProfileUpload}
+            />
+            <ImageUploadField
+              label="Banner / Cover Image (optional)"
+              hint="Recommended 1200 × 400 px · JPG or PNG · up to 5 MB"
+              aspectClass="h-32"
+              previewUrl={bannerImageUrl}
+              isLoading={bannerUpload.isPending}
+              error={bannerUpload.isError ? bannerUpload.error?.message : ""}
+              onUpload={handleBannerUpload}
+            />
+          </FormSection>
+
+          {/* 9 — Terms */}
           <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-6">
             <label className="flex items-start gap-3 cursor-pointer">
               <input
@@ -372,11 +530,11 @@ export default function AddServicePage() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={submitState === "loading"}
+            disabled={isSubmitting || profileUpload.isPending || bannerUpload.isPending}
             className="w-full flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl shadow-md hover:shadow-lg transition-all text-base"
           >
-            {submitState === "loading" ? (
-              <><Loader2 size={20} className="animate-spin" /> Submitting your business...</>
+            {isSubmitting ? (
+              <><Loader2 size={20} className="animate-spin" /> Submitting your business…</>
             ) : (
               <><Send size={18} /> Submit Business Listing</>
             )}

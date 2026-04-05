@@ -1,3 +1,8 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { Loader2, AlertCircle, Plus } from "lucide-react";
+import Link from "next/link";
 import ProfileHeader from "@/app/components/profile-components/ProfileHeader";
 import AboutSection from "@/app/components/profile-components/AboutSection";
 import ServicesSection from "@/app/components/profile-components/ServicesSection";
@@ -6,44 +11,97 @@ import ServiceAreasSection from "@/app/components/profile-components/ServiceArea
 import PricingSection from "@/app/components/profile-components/PricingSection";
 import ReviewsSection from "@/app/components/profile-components/ReviewsSection";
 import ContactSection from "@/app/components/profile-components/ContactSection";
+import { useBusiness } from "@/app/hooks/useBusiness";
+import { useAuth } from "@/app/context/AuthContext";
 
-// Placeholder — replace with session/auth data when backend is ready
-const mockProfile = {
-  name: "Muhammad Usman",
-  category: "electricians",
-  city: "Rawalpindi",
-  area: "Saddar",
-  image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop",
-  rating: 4.9,
-  reviews: 0,
-  experience: 8,
-  availability: "Available",
-  responseTime: "< 2 hours",
-  verification: false,
-  about:
-    "Experienced electrician offering residential and commercial electrical services across Rawalpindi. Fast, reliable, and affordable with guaranteed quality work.",
-  services: ["Residential Wiring", "Fault Detection", "Panel Installation", "LED Lighting"],
-  experience_details: {
-    years: 8,
-    projects: 200,
-    specializations: ["Residential", "Commercial"],
-  },
-  serviceAreas: ["Rawalpindi", "Islamabad"],
-  pricing: {
-    calloutFee: "Rs 500",
-    hourlyRate: "Rs 1500-2000",
-    minCharge: "Rs 1000",
-  },
-  reviews_list: [],
-  contact: {
-    phone: "+92-300-0000000",
-    whatsapp: "+92-300-0000000",
-    email: "usman@example.com",
-  },
-};
+/** Maps the Business DB document to the shape expected by profile components */
+function mapBusinessToProvider(business) {
+  return {
+    name: business.name,
+    category: business.category,
+    city: business.city,
+    area: business.area,
+    image: business.profileImage || "",
+    bannerImage: business.bannerImage || "",
+    rating: business.rating ?? 0,
+    reviews: business.reviewsCount ?? 0,
+    experience: business.experience,
+    availability: business.availability,
+    responseTime: business.responseTime,
+    verification: business.verification,
+    about: business.about,
+    services: business.services,
+    experience_details: {
+      years: business.experience,
+      projects: business.completedProjects,
+      specializations: business.specializations,
+    },
+    serviceAreas: business.serviceAreas,
+    pricing: {
+      calloutFee: business.pricing?.calloutFee ? `Rs ${business.pricing.calloutFee}` : "",
+      hourlyRate: business.pricing?.hourlyRate ? `Rs ${business.pricing.hourlyRate}` : "",
+      minCharge: business.pricing?.minCharge ? `Rs ${business.pricing.minCharge}` : "",
+    },
+    reviews_list: [],
+    contact: {
+      phone: business.phone,
+      whatsapp: business.whatsapp || business.phone,
+      email: business.email,
+    },
+  };
+}
 
 export default function ProviderProfilePage() {
-  const provider = mockProfile;
+  const { token } = useAuth();
+  const router = useRouter();
+  const { data: business, isLoading, isError, error } = useBusiness();
+
+  if (!token) {
+    router.replace("/sign-in");
+    return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 size={32} className="animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    // 404 means no business yet — guide the user to create one
+    if (error?.message?.includes("No business")) {
+      return (
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-6 px-4 text-center">
+          <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center">
+            <Plus size={28} className="text-blue-600" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">No Business Listing Yet</h2>
+            <p className="text-gray-500 text-sm max-w-sm">
+              You haven't created a business listing yet. Add your business to start receiving customers.
+            </p>
+          </div>
+          <Link
+            href="/add-business"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition"
+          >
+            Add Your Business
+          </Link>
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center gap-3 text-red-600">
+        <AlertCircle size={22} />
+        <span>{error?.message || "Failed to load profile"}</span>
+      </div>
+    );
+  }
+
+  const provider = mapBusinessToProvider(business);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -68,3 +126,4 @@ export default function ProviderProfilePage() {
     </div>
   );
 }
+

@@ -16,9 +16,19 @@ const availabilityStyles = {
 export default function ProfileHeader({ provider }) {
   return (
     <div className="bg-white shadow-sm rounded-2xl overflow-hidden mb-6">
-      {/* Cover */}
-      <div className="h-36 bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 relative">
-        <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml,%3Csvg width%3D%2260%22 height%3D%2260%22 viewBox%3D%220 0 60 60%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg fill%3D%22none%22 fill-rule%3D%22evenodd%22%3E%3Cg fill%3D%22%23ffffff%22 fill-opacity%3D%221%22%3E%3Cpath d%3D%22M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]" />
+      {/* Cover — uses uploaded banner image if available, otherwise gradient */}
+      <div className="h-36 relative">
+        {provider.bannerImage ? (
+          <img
+            src={provider.bannerImage}
+            alt="Business banner"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="h-full bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600">
+            <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml,%3Csvg width%3D%2260%22 height%3D%2260%22 viewBox%3D%220 0 60 60%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg fill%3D%22none%22 fill-rule%3D%22evenodd%22%3E%3Cg fill%3D%22%23ffffff%22 fill-opacity%3D%221%22%3E%3Cpath d%3D%22M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]" />
+          </div>
+        )}
       </div>
 
       {/* Info */}
@@ -27,7 +37,7 @@ export default function ProfileHeader({ provider }) {
           {/* Avatar */}
           <div className="relative -mt-14 flex-shrink-0">
             <img
-              src={provider.image}
+              src={provider.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(provider.name)}&size=112&background=3b82f6&color=fff&bold=true`}
               alt={provider.name}
               className="w-28 h-28 rounded-2xl border-4 border-white shadow-md object-cover"
             />
