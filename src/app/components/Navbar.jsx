@@ -18,6 +18,12 @@ const Navbar = () => {
         setIsMenuOpen(false)
     }
 
+    const [isProfileOpen, setIsProfileOpen] = useState(false)
+
+    const toggleProfileMenu = () => {
+        setIsProfileOpen(!isProfileOpen)
+    }
+
     return (
         <>
             <header className="bg-white shadow-md sticky top-0 z-50">
@@ -80,36 +86,51 @@ const Navbar = () => {
                                 </Link>
                             </li>
                             {!user ? (
-                                <>
-                                    <li>
-                                        <Link
-                                            className="flex items-center gap-2 px-4 py-2 text-white bg-purple-500 hover:bg-purple-600 transition-colors rounded-lg font-medium"
-                                            href="/sign-in"
-                                        >
-                                            <LogIn size={18} />
-                                            <span>Sign In</span>
-                                        </Link>
-                                    </li>
-
-                                    {/* <li>
-                                        <Link
-                                            className="flex items-center gap-2 px-4 py-2 text-white bg-purple-500 hover:bg-purple-600 transition-colors rounded-lg font-medium"
-                                            href="/sign-up"
-                                        >
-                                            <UserPlus size={18} />
-                                            <span>Sign Up</span>
-                                        </Link>
-                                    </li> */}
-                                </>
-                            ) : (
                                 <li>
-                                    <button
-                                        onClick={logout}
-                                        className="flex items-center gap-2 px-4 py-2 text-white bg-red-500 hover:bg-red-600 transition-colors rounded-lg font-medium cursor-pointer"
+                                    <Link
+                                        className="flex items-center gap-2 px-4 py-2 text-white bg-purple-500 hover:bg-purple-600 transition-colors rounded-lg font-medium"
+                                        href="/sign-in"
                                     >
-                                        <LogOut size={18} />
-                                        <span>Logout</span>
+                                        <LogIn size={18} />
+                                        <span>Sign In</span>
+                                    </Link>
+                                </li>
+                            ) : (
+                                <li className="relative">
+                                    {/* Profile Avatar */}
+                                    <button
+                                        onClick={toggleProfileMenu}
+                                        className="flex items-center gap-2 focus:outline-none"
+                                    >
+                                        <Image
+                                            src={user?.image || images.profile_picture}
+                                            alt="profile"
+                                            width={40}
+                                            height={40}
+                                            className="rounded-full border border-gray-300"
+                                        />
                                     </button>
+
+                                    {/* Dropdown */}
+                                    {isProfileOpen && (
+                                        <div className="absolute right-0 mt-3 w-44 bg-white shadow-lg rounded-lg border border-gray-100 overflow-hidden">
+
+                                            <Link
+                                                href="/provider-profile"
+                                                className="block px-4 py-2 text-gray-700 hover:bg-purple-50"
+                                            >
+                                                Dashboard
+                                            </Link>
+
+                                            <button
+                                                onClick={logout}
+                                                className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50"
+                                            >
+                                                Logout
+                                            </button>
+
+                                        </div>
+                                    )}
                                 </li>
                             )}
 
@@ -123,7 +144,7 @@ const Navbar = () => {
                                         <span>Admin</span>
                                     </Link>
                                 </li>
-                                )}
+                            )}
                         </ul>
                     </div>
 
