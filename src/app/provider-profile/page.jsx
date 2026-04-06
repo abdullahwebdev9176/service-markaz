@@ -105,8 +105,8 @@ export default function ProviderProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <div className="flex justify-end mb-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 relative">
+        <div className="flex justify-end mb-4 absolute top-4 right-10 z-10">
           <Link
             href="/edit-business"
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition"
