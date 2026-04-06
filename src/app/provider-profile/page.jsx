@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Loader2, AlertCircle, Plus } from "lucide-react";
+import { Loader2, AlertCircle, Plus, Pencil } from "lucide-react";
 import Link from "next/link";
 import ProfileHeader from "@/app/components/profile-components/ProfileHeader";
 import AboutSection from "@/app/components/profile-components/AboutSection";
@@ -106,6 +106,16 @@ export default function ProviderProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        <div className="flex justify-end mb-4">
+          <Link
+            href="/edit-business"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition"
+          >
+            <Pencil size={15} />
+            Edit Profile
+          </Link>
+        </div>
+
         <ProfileHeader provider={provider} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

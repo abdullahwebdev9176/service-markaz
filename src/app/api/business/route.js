@@ -111,3 +111,79 @@ export async function GET(request) {
 
   return NextResponse.json({ success: true, data: business });
 }
+
+// PUT /api/business — Update the logged-in user's business listing
+export async function PUT(request) {
+  const payload = verifyToken(request);
+  if (!payload) {
+    return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ success: false, message: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const {
+    name, email, phone, whatsapp,
+    title, category, city, area, about,
+    services, experience, completedProjects, specializations, serviceAreas,
+    pricing, availability, responseTime,
+    profileImage, bannerImage,
+  } = body;
+
+  const requiredFields = { name, email, phone, title, category, city, area, about, availability, responseTime };
+  const missing = Object.keys(requiredFields).filter((key) => !requiredFields[key]);
+  if (missing.length) {
+    return NextResponse.json(
+      { success: false, message: `Required fields missing: ${missing.join(", ")}` },
+      { status: 400 }
+    );
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return NextResponse.json({ success: false, message: "Invalid email format" }, { status: 400 });
+  }
+
+  if (!services?.length || services.every((s) => !s)) {
+    return NextResponse.json({ success: false, message: "At least one service is required" }, { status: 400 });
+  }
+
+  await connectDB();
+
+  const business = await Business.findOne({ owner: payload.id });
+  if (!business) {
+    return NextResponse.json({ success: false, message: "No business listing found" }, { status: 404 });
+  }
+
+  business.name = name.trim();
+  business.email = email.toLowerCase().trim();
+  business.phone = phone.trim();
+  business.whatsapp = whatsapp?.trim() || "";
+  business.title = title.trim();
+  business.category = category;
+  business.city = city;
+  business.area = area.trim();
+  business.about = about.trim();
+  business.services = services.filter(Boolean).map((s) => s.trim());
+  business.experience = Number(experience) || 0;
+  business.completedProjects = Number(completedProjects) || 0;
+  business.specializations = specializations?.filter(Boolean).map((s) => s.trim()) || [];
+  business.serviceAreas = serviceAreas?.filter(Boolean).map((s) => s.trim()) || [];
+  business.pricing = {
+    calloutFee: pricing?.calloutFee || "",
+    hourlyRate: pricing?.hourlyRate || "",
+    minCharge: pricing?.minCharge || "",
+  };
+  business.availability = availability;
+  business.responseTime = responseTime;
+  if (profileImage) business.profileImage = profileImage;
+  if (bannerImage !== undefined) business.bannerImage = bannerImage;
+
+  await business.save();
+
+  return NextResponse.json({ success: true, data: business });
+}

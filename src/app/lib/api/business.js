@@ -28,6 +28,21 @@ export async function getMyBusiness(token) {
   return json.data;
 }
 
+export async function updateBusiness(data, token) {
+  const res = await fetch("/api/business", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || "Failed to update business listing");
+  return json.data;
+}
+
 export async function uploadImage(file, folder, token) {
   const formData = new FormData();
   formData.append("file", file);
