@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Menu, X, Layers, Plus, MapPin, LogIn, UserPlus, LogOut, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { images } from '@/data/assets'
@@ -19,10 +19,29 @@ const Navbar = () => {
     }
 
     const [isProfileOpen, setIsProfileOpen] = useState(false)
+    const profileMenuRef = useRef(null)
 
     const toggleProfileMenu = () => {
         setIsProfileOpen(!isProfileOpen)
     }
+
+    const closeProfileDropdown = () => {
+        setIsProfileOpen(false)
+    }
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+                setIsProfileOpen(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
 
     return (
         <>
@@ -96,7 +115,7 @@ const Navbar = () => {
                                     </Link>
                                 </li>
                             ) : (
-                                <li className="relative">
+                                <li ref={profileMenuRef} className="relative">
                                     {/* Profile Avatar */}
                                     <button
                                         onClick={toggleProfileMenu}
@@ -117,13 +136,17 @@ const Navbar = () => {
 
                                             <Link
                                                 href="/provider-profile"
+                                                onClick={closeProfileDropdown}
                                                 className="block px-4 py-2 text-gray-700 hover:bg-purple-50"
                                             >
                                                 Dashboard
                                             </Link>
 
                                             <button
-                                                onClick={logout}
+                                                onClick={() => {
+                                                    logout()
+                                                    closeProfileDropdown()
+                                                }}
                                                 className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50"
                                             >
                                                 Logout
