@@ -1,7 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/app/components/Navbar"; 
-import Footer from "@/app/components/Footer";
 import Providers from "@/app/Providers";
 
 const geistSans = Geist({
@@ -15,8 +13,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Service Markaz",
-  description: "Service Markaz",
+  title: {
+    default: "Service Markaz – Find Local Service Providers in Pakistan",
+    template: "%s | Service Markaz",
+  },
+  description:
+    "Service Markaz helps you find trusted local service providers — electricians, plumbers, painters and more — across cities in Pakistan.",
+  metadataBase: new URL("https://servicemarkaz.com"),
+  openGraph: {
+    siteName: "Service Markaz",
+    type: "website",
+    locale: "en_PK",
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -27,9 +35,7 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col bg-gray-50">
         <Providers>
-          <Navbar />
           {children}
-          <Footer />
         </Providers>
       </body>
     </html>

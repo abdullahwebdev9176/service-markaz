@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { categories } from "@/data/categories";
 
-import SectionHeading from "../components/ui/SectionHeading";
-import CategoriesGrid from "../components/CategoriesGrid";
-import IntroSection from "../components/ui/IntroSection";
-import PrimaryBtn from "../components/ui/PrimaryBtn";
+import SectionHeading from "@/app/components/ui/SectionHeading";
+import IntroSection from "@/app/components/ui/IntroSection";
+import PrimaryBtn from "@/app/components/ui/PrimaryBtn";
+import CategoriesGrid from "@/app/components/CategoriesGrid";
 
 const introTitle = "Browse Service Categories";
 const introSubtitle =

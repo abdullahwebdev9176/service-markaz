@@ -15,11 +15,11 @@ import {
   Clock,
   Headphones,
 } from "lucide-react";
-import IntroSection from "../components/ui/IntroSection";
-import FormSection from "../components/Form/FormSection";
-import InputField from "../components/Form/InputField";
-import TextAreaField from "../components/Form/TextAreaField";
-import SelectBox from "../components/Form/SelectBox";
+import IntroSection from "@/app/components/ui/IntroSection";
+import FormSection from "@/app/components/Form/FormSection";
+import InputField from "@/app/components/Form/InputField";
+import TextAreaField from "@/app/components/Form/TextAreaField";
+import SelectBox from "@/app/components/Form/SelectBox";
 
 const subjectOptions = [
   { label: "General Inquiry", value: "general" },

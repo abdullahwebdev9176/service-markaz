@@ -9,17 +9,16 @@ import {
   Loader2, Send, Wrench, Shield, Award, TrendingUp, Users, Zap, Star,
   AlertCircle, Image as ImageIcon, X,
 } from "lucide-react";
-import IntroSection from "../components/ui/IntroSection";
-import SectionHeading from "../components/ui/SectionHeading";
-import InputField from "../components/Form/InputField";
-import SelectBox from "../components/Form/SelectBox";
-import TextAreaField from "../components/Form/TextAreaField";
-import FormSection from "../components/Form/FormSection";
-import DynamicListField from "../components/Form/DynamicListField";
+import IntroSection from "@/app/components/ui/IntroSection";
+import InputField from "@/app/components/Form/InputField";
+import SelectBox from "@/app/components/Form/SelectBox";
+import TextAreaField from "@/app/components/Form/TextAreaField";
+import FormSection from "@/app/components/Form/FormSection";
+import DynamicListField from "@/app/components/Form/DynamicListField";
 import { cities } from "@/data/cities";
 import { categories } from "@/data/categories";
 import { useAuth } from "@/app/context/AuthContext";
-import { useAddBusiness } from "@/app/hooks/useAddBusiness";
+import { useEditBusiness } from "@/app/hooks/useEditBusiness";
 import { useImageUpload } from "@/app/hooks/useImageUpload";
 import { useBusiness } from "@/app/hooks/useBusiness";
 
@@ -115,33 +114,26 @@ function ImageUploadField({ label, hint, aspectClass, onUpload, previewUrl, isLo
 }
 
 // ─── Main page ────────────────────────────────────────────────────────────────
-export default function AddBusinessPage() {
+export default function EditBusinessPage() {
   const { token } = useAuth();
   const router = useRouter();
+
+  const { data: business, isLoading: loadingBusiness, isError } = useBusiness();
 
   const [profileImageUrl, setProfileImageUrl] = useState("");
   const [bannerImageUrl, setBannerImageUrl] = useState("");
   const [profileImageError, setProfileImageError] = useState("");
+  const [formReady, setFormReady] = useState(false);
 
-  const addBusiness = useAddBusiness();
+  const editBusiness = useEditBusiness();
   const profileUpload = useImageUpload("service-markaz/profiles");
   const bannerUpload = useImageUpload("service-markaz/banners");
-
-  // Redirect if user already has a business
-  const { data: existingBusiness, isLoading: checkingBusiness } = useBusiness();
-
-  useEffect(() => {
-    if (!token && !checkingBusiness) router.replace("/sign-in");
-  }, [token, checkingBusiness, router]);
-
-  useEffect(() => {
-    if (existingBusiness) router.replace("/provider-profile");
-  }, [existingBusiness, router]);
 
   const {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -154,6 +146,52 @@ export default function AddBusinessPage() {
   const services = useFieldArray({ control, name: "services" });
   const serviceAreas = useFieldArray({ control, name: "serviceAreas" });
   const specializations = useFieldArray({ control, name: "specializations" });
+
+  // Pre-fill form once business data is loaded
+  useEffect(() => {
+    if (!business) return;
+
+    setProfileImageUrl(business.profileImage || "");
+    setBannerImageUrl(business.bannerImage || "");
+
+    reset({
+      name: business.name || "",
+      email: business.email || "",
+      phone: business.phone || "",
+      whatsapp: business.whatsapp || "",
+      title: business.title || "",
+      category: business.category || "",
+      city: business.city || "",
+      area: business.area || "",
+      about: business.about || "",
+      experience: business.experience ?? "",
+      completedProjects: business.completedProjects ?? "",
+      calloutFee: business.pricing?.calloutFee || "",
+      hourlyRate: business.pricing?.hourlyRate || "",
+      minCharge: business.pricing?.minCharge || "",
+      availability: business.availability || "",
+      responseTime: business.responseTime || "",
+      services: business.services?.length
+        ? business.services.map((s) => ({ value: s }))
+        : [{ value: "" }],
+      serviceAreas: business.serviceAreas?.length
+        ? business.serviceAreas.map((s) => ({ value: s }))
+        : [{ value: "" }],
+      specializations: business.specializations?.length
+        ? business.specializations.map((s) => ({ value: s }))
+        : [{ value: "" }],
+    });
+
+    setFormReady(true);
+  }, [business, reset]);
+
+  useEffect(() => {
+    if (!token) router.replace("/sign-in");
+  }, [token, router]);
+
+  useEffect(() => {
+    if (isError) router.replace("/provider-profile");
+  }, [isError, router]);
 
   const handleProfileUpload = (file) => {
     if (!file) { setProfileImageUrl(""); return; }
@@ -176,7 +214,7 @@ export default function AddBusinessPage() {
       setProfileImageError("Profile photo is required");
       return;
     }
-    addBusiness.mutate({
+    editBusiness.mutate({
       name: data.name,
       email: data.email,
       phone: data.phone,
@@ -203,7 +241,7 @@ export default function AddBusinessPage() {
     });
   };
 
-  if (!token || checkingBusiness) {
+  if (!token || loadingBusiness || !formReady) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader2 size={32} className="animate-spin text-blue-500" />
@@ -211,39 +249,39 @@ export default function AddBusinessPage() {
     );
   }
 
-  const isSubmitting = addBusiness.isPending;
+  const isSubmitting = editBusiness.isPending;
 
   return (
     <div className="min-h-screen bg-gray-50">
 
       <IntroSection
-        title="Add Your Business"
-        subtitle="Grow your business by reaching customers in your city. List your service in just a few minutes."
+        title="Edit Your Business"
+        subtitle="Update your business information to keep your profile accurate and up to date."
       />
 
       <section className="max-w-3xl mx-auto px-4 sm:px-6 pb-12 pt-5">
 
         <div className="text-center mb-10">
-          <h2 className="text-2xl font-bold text-gray-800">Business Registration Form</h2>
+          <h2 className="text-2xl font-bold text-gray-800">Edit Business Profile</h2>
           <p className="text-gray-500 mt-2 text-sm">
             Fields marked <span className="text-red-500 font-semibold">*</span> are required.
           </p>
         </div>
 
         {/* Success / Error banners */}
-        {addBusiness.isSuccess && (
+        {editBusiness.isSuccess && (
           <div className="flex items-center gap-3 bg-green-50 border border-green-200 text-green-700 rounded-xl px-5 py-4 mb-8">
             <CheckCircle size={22} className="flex-shrink-0 text-green-500" />
             <div>
-              <p className="font-semibold">Business submitted successfully!</p>
+              <p className="font-semibold">Business updated successfully!</p>
               <p className="text-sm text-green-600">Redirecting to your profile…</p>
             </div>
           </div>
         )}
-        {addBusiness.isError && (
+        {editBusiness.isError && (
           <div className="flex items-center gap-3 bg-red-50 border border-red-200 text-red-700 rounded-xl px-5 py-4 mb-8">
             <AlertCircle size={22} className="flex-shrink-0" />
-            <p className="font-semibold">{addBusiness.error?.message || "Something went wrong. Please try again."}</p>
+            <p className="font-semibold">{editBusiness.error?.message || "Something went wrong. Please try again."}</p>
           </div>
         )}
 
@@ -480,7 +518,7 @@ export default function AddBusinessPage() {
           <FormSection
             icon={ImageIcon}
             title="Profile & Banner Images"
-            subtitle="Images auto-convert to WebP for fast loading"
+            subtitle="Upload new images or keep existing ones"
           >
             <ImageUploadField
               label="Profile Photo *"
@@ -502,77 +540,36 @@ export default function AddBusinessPage() {
             />
           </FormSection>
 
-          {/* 9 — Terms */}
-          <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-6">
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                {...register("terms", { required: "You must accept the terms to continue" })}
-                type="checkbox"
-                className="mt-0.5 w-4 h-4 accent-blue-600 flex-shrink-0"
-              />
-              <div>
-                <p className="text-sm text-gray-700">
-                  I confirm all information is accurate and I agree to the{" "}
-                  <span className="text-blue-600 font-semibold hover:underline cursor-pointer">Terms & Conditions</span>{" "}
-                  and{" "}
-                  <span className="text-blue-600 font-semibold hover:underline cursor-pointer">Privacy Policy</span>{" "}
-                  of Service Markaz.
-                </p>
-                {errors.terms && (
-                  <p className="flex items-center gap-1 mt-1 text-xs text-red-500">
-                    <AlertCircle size={12} /> {errors.terms.message}
-                  </p>
-                )}
-              </div>
-            </label>
-          </div>
-
           {/* Submit */}
-          <button
-            type="submit"
-            disabled={isSubmitting || profileUpload.isPending || bannerUpload.isPending}
-            className="w-full flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl shadow-md hover:shadow-lg transition-all text-base"
-          >
-            {isSubmitting ? (
-              <><Loader2 size={20} className="animate-spin" /> Submitting your business…</>
-            ) : (
-              <><Send size={18} /> Submit Business Listing</>
-            )}
-          </button>
-
-          <p className="text-center text-xs text-gray-400">
-            <Shield size={12} className="inline mr-1" />
-            Your information is secure and will not be shared with third parties.
-          </p>
+          <div className="flex gap-3 justify-end pt-2">
+            <button
+              type="button"
+              onClick={() => router.push("/provider-profile")}
+              className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 hover:bg-gray-100 font-semibold transition text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold px-8 py-3 rounded-xl transition text-sm"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Saving…
+                </>
+              ) : (
+                <>
+                  <Send size={18} />
+                  Save Changes
+                </>
+              )}
+            </button>
+          </div>
 
         </form>
       </section>
-
-      {/* Benefits */}
-      <section className="bg-white py-16 mt-4">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <SectionHeading
-            title="Why list your service?"
-            subtitle="Join ServiceMarkaz and grow your local business"
-          />
-          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-5 mt-8">
-            {[
-              { icon: Users, label: "Reach more local customers", bg: "bg-blue-100", color: "text-blue-600" },
-              { icon: TrendingUp, label: "Increase visibility online", bg: "bg-green-100", color: "text-green-600" },
-              { icon: MessageCircle, label: "Receive direct inquiries", bg: "bg-purple-100", color: "text-purple-600" },
-              { icon: Shield, label: "Build trust with your profile", bg: "bg-orange-100", color: "text-orange-600" },
-            ].map(({ icon: Icon, label, bg, color }) => (
-              <div key={label} className="flex flex-col items-center gap-3 p-5 rounded-xl border border-gray-100 hover:shadow-md transition">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${bg}`}>
-                  <Icon size={22} className={color} />
-                </div>
-                <p className="text-sm font-medium text-gray-700">{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
     </div>
   );
 }

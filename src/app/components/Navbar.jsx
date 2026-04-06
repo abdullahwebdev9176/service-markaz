@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useRef, useEffect } from 'react'
-import { Menu, X, Layers, Plus, MapPin, LogIn, UserPlus, LogOut, MessageSquare } from 'lucide-react'
+import { Menu, X, Layers, Plus, MapPin, LogIn, UserPlus, LogOut, MessageSquare, UserCog } from 'lucide-react'
 import Link from 'next/link'
 import { images } from '@/data/assets'
 import Image from 'next/image'
@@ -158,12 +158,12 @@ const Navbar = () => {
                             )}
 
                             {user && user?.role === "admin" && (
-                                <li>
+                                <li className="ml-4">
                                     <Link
                                         className="flex items-center gap-2 px-4 py-2 text-white bg-purple-500 hover:bg-purple-600 transition-colors rounded-lg font-medium"
                                         href="/admin"
                                     >
-                                        <MessageSquare size={18} />
+                                        <UserCog size={18} />
                                         <span>Admin</span>
                                     </Link>
                                 </li>

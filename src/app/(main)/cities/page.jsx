@@ -1,6 +1,6 @@
 import React from 'react'
-import IntroSection from '../components/ui/IntroSection'
-import SectionHeading from '../components/ui/SectionHeading'
+import IntroSection from '@/app/components/ui/IntroSection'
+import SectionHeading from '@/app/components/ui/SectionHeading'
 import { cities } from '@/data/cities'
 import Link from "next/link";
 
