@@ -1,36 +1,115 @@
-import { Users, Search, Filter, Eye, Ban, CheckCircle, ArrowUpRight } from "lucide-react";
+"use client";
 
-const users = [
-  { id: 1,  name: "Muhammad Usman",   email: "usman@example.com",    phone: "03001234567", role: "Provider",  status: "active",  joined: "Apr 6, 2026" },
-  { id: 2,  name: "Sara Khan",         email: "sara@example.com",     phone: "03111234567", role: "Customer",  status: "active",  joined: "Apr 6, 2026" },
-  { id: 3,  name: "Bilal Ahmad",       email: "bilal@example.com",    phone: "03211234567", role: "Provider",  status: "pending", joined: "Apr 5, 2026" },
-  { id: 4,  name: "Ayesha Siddiqui",   email: "ayesha@example.com",   phone: "03331234567", role: "Customer",  status: "active",  joined: "Apr 5, 2026" },
-  { id: 5,  name: "Tariq Mehmood",     email: "tariq@example.com",    phone: "03451234567", role: "Provider",  status: "blocked", joined: "Apr 4, 2026" },
-  { id: 6,  name: "Hassan Raza",       email: "hassan@example.com",   phone: "03121234567", role: "Provider",  status: "active",  joined: "Apr 3, 2026" },
-  { id: 7,  name: "Nadia Malik",       email: "nadia@example.com",    phone: "03411234567", role: "Customer",  status: "active",  joined: "Apr 3, 2026" },
-  { id: 8,  name: "Zubair Sheikh",     email: "zubair@example.com",   phone: "03031234567", role: "Provider",  status: "pending", joined: "Apr 2, 2026" },
-  { id: 9,  name: "Fatima Zahra",      email: "fatima@example.com",   phone: "03221234567", role: "Customer",  status: "active",  joined: "Apr 1, 2026" },
-  { id: 10, name: "Imran Khan",        email: "imran@example.com",    phone: "03441234567", role: "Provider",  status: "active",  joined: "Mar 31, 2026" },
-];
+import { useState, useEffect, useCallback } from "react";
+import { Search, Loader2 } from "lucide-react";
+import { useAuth } from "@/app/context/AuthContext";
 
-const statusStyle = {
+const STATUS_STYLE = {
   active:  "bg-green-50 text-green-700 ring-1 ring-green-200",
   pending: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
   blocked: "bg-red-50 text-red-600 ring-1 ring-red-200",
 };
-const roleStyle = {
-  Provider: "bg-blue-50 text-blue-700 ring-1 ring-blue-200",
-  Customer: "bg-gray-100 text-gray-600",
+
+const ROLE_STYLE = {
+  provider: "bg-blue-50 text-blue-700 ring-1 ring-blue-200",
+  customer: "bg-gray-100 text-gray-600",
 };
 
-const summaryCards = [
-  { label: "Total Users",     value: "1,248", color: "text-blue-600",   bg: "bg-blue-50" },
-  { label: "Providers",       value: "384",   color: "text-indigo-600", bg: "bg-indigo-50" },
-  { label: "Customers",       value: "864",   color: "text-purple-600", bg: "bg-purple-50" },
-  { label: "Blocked",         value: "12",    color: "text-red-600",    bg: "bg-red-50" },
-];
+const PAGE_SIZE = 10;
+
+function useDebounce(value, delay) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(t);
+  }, [value, delay]);
+  return debounced;
+}
+
+function buildPageList(current, total) {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  if (current <= 4) return [1, 2, 3, 4, 5, "...", total];
+  if (current >= total - 3) return [1, "...", total - 4, total - 3, total - 2, total - 1, total];
+  return [1, "...", current - 1, current, current + 1, "...", total];
+}
 
 export default function UsersPage() {
+  const { token } = useAuth();
+
+  const [users, setUsers] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [summary, setSummary] = useState({ providers: 0, customers: 0, blocked: 0 });
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(null);
+
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
+  const debouncedSearch = useDebounce(search, 400);
+
+  // Reset to page 1 whenever filters change
+  useEffect(() => { setPage(1); }, [debouncedSearch, roleFilter, statusFilter]);
+
+  const fetchUsers = useCallback(async () => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({ page, limit: PAGE_SIZE });
+      if (debouncedSearch) params.set("search", debouncedSearch);
+      if (roleFilter) params.set("role", roleFilter);
+      if (statusFilter) params.set("status", statusFilter);
+
+      const res = await fetch(`/api/admin/users?${params}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const json = await res.json();
+      if (json.success) {
+        setUsers(json.data.users);
+        setTotal(json.data.total);
+        setTotalPages(json.data.totalPages);
+        setSummary(json.data.summary);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [token, page, debouncedSearch, roleFilter, statusFilter]);
+
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
+
+  const handleStatusChange = async (userId, newStatus) => {
+    setActionLoading(userId);
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userId, status: newStatus }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setUsers((prev) =>
+          prev.map((u) => (u._id === userId ? { ...u, status: newStatus } : u))
+        );
+      }
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const summaryCards = [
+    { label: "Total Users",  value: total,              color: "text-blue-600",   bg: "bg-blue-50" },
+    { label: "Providers",    value: summary.providers,  color: "text-indigo-600", bg: "bg-indigo-50" },
+    { label: "Customers",    value: summary.customers,  color: "text-purple-600", bg: "bg-purple-50" },
+    { label: "Blocked",      value: summary.blocked,    color: "text-red-600",    bg: "bg-red-50" },
+  ];
+
+  const pages = buildPageList(page, totalPages);
+
   return (
     <div className="space-y-6">
 
@@ -61,20 +140,30 @@ export default function UsersPage() {
             <Search size={15} className="text-gray-400" />
             <input
               type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search users by name or email…"
               className="bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none w-full"
             />
           </div>
-          <select className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-600 outline-none">
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-600 outline-none"
+          >
             <option value="">All Roles</option>
-            <option>Provider</option>
-            <option>Customer</option>
+            <option value="provider">Provider</option>
+            <option value="customer">Customer</option>
           </select>
-          <select className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-600 outline-none">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-600 outline-none"
+          >
             <option value="">All Statuses</option>
-            <option>active</option>
-            <option>pending</option>
-            <option>blocked</option>
+            <option value="active">Active</option>
+            <option value="pending">Pending</option>
+            <option value="blocked">Blocked</option>
           </select>
         </div>
 
@@ -92,61 +181,115 @@ export default function UsersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {users.map((u) => (
-                <tr key={u.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-3.5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
-                        {u.name.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-800">{u.name}</p>
-                        <p className="text-xs text-gray-400">{u.email}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3.5 text-gray-500 text-xs">{u.phone}</td>
-                  <td className="px-4 py-3.5">
-                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${roleStyle[u.role]}`}>{u.role}</span>
-                  </td>
-                  <td className="px-4 py-3.5">
-                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize ${statusStyle[u.status]}`}>{u.status}</span>
-                  </td>
-                  <td className="px-4 py-3.5 text-gray-400 text-xs">{u.joined}</td>
-                  <td className="px-4 py-3.5">
-                    <div className="flex items-center gap-2">
-                      <button className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition" title="View">
-                        <Eye size={15} />
-                      </button>
-                      {u.status !== "blocked" ? (
-                        <button className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition" title="Block">
-                          <Ban size={15} />
-                        </button>
-                      ) : (
-                        <button className="p-1.5 rounded-lg text-gray-400 hover:text-green-600 hover:bg-green-50 transition" title="Unblock">
-                          <CheckCircle size={15} />
-                        </button>
-                      )}
-                    </div>
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
+                    <Loader2 size={24} className="animate-spin mx-auto mb-2" />
+                    <p className="text-sm">Loading users…</p>
                   </td>
                 </tr>
-              ))}
+              ) : users.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 text-sm">
+                    No users found.
+                  </td>
+                </tr>
+              ) : (
+                users.map((u) => (
+                  <tr key={u._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                          {u.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-800">{u.name}</p>
+                          <p className="text-xs text-gray-400">{u.email}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3.5 text-gray-500 text-xs">{u.phone}</td>
+                    <td className="px-4 py-3.5">
+                      <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize ${ROLE_STYLE[u.role] ?? "bg-gray-100 text-gray-600"}`}>
+                        {u.role}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3.5">
+                      <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize ${STATUS_STYLE[u.status] ?? ""}`}>
+                        {u.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3.5 text-gray-400 text-xs">
+                      {new Date(u.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                    </td>
+                    <td className="px-4 py-3.5">
+                      {actionLoading === u._id ? (
+                        <Loader2 size={15} className="animate-spin text-gray-400" />
+                      ) : (
+                        <select
+                          value={u.status}
+                          onChange={(e) => handleStatusChange(u._id, e.target.value)}
+                          className={`text-xs font-semibold px-2.5 py-1 rounded-lg border outline-none cursor-pointer capitalize ${
+                            u.status === "active"
+                              ? "bg-green-50 text-green-700 border-green-200"
+                              : u.status === "pending"
+                              ? "bg-amber-50 text-amber-700 border-amber-200"
+                              : "bg-red-50 text-red-600 border-red-200"
+                          }`}
+                        >
+                          <option value="active">Active</option>
+                          <option value="pending">Pending</option>
+                          <option value="blocked">Blocked</option>
+                        </select>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-          <p className="text-sm text-gray-500">Showing <span className="font-semibold text-gray-700">10</span> of <span className="font-semibold text-gray-700">1,248</span> users</p>
-          <div className="flex items-center gap-1">
-            <button className="px-3 py-1.5 text-sm rounded-lg text-gray-500 hover:bg-gray-100 transition">Prev</button>
-            <button className="px-3 py-1.5 text-sm rounded-lg bg-blue-600 text-white font-semibold">1</button>
-            <button className="px-3 py-1.5 text-sm rounded-lg text-gray-500 hover:bg-gray-100 transition">2</button>
-            <button className="px-3 py-1.5 text-sm rounded-lg text-gray-500 hover:bg-gray-100 transition">3</button>
-            <span className="px-2 text-gray-400">…</span>
-            <button className="px-3 py-1.5 text-sm rounded-lg text-gray-500 hover:bg-gray-100 transition">Next</button>
+        {!loading && totalPages > 1 && (
+          <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
+            <p className="text-sm text-gray-500">
+              Showing <span className="font-semibold text-gray-700">{users.length}</span> of{" "}
+              <span className="font-semibold text-gray-700">{total}</span> users
+            </p>
+            <div className="flex items-center gap-1">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+                className="px-3 py-1.5 text-sm rounded-lg text-gray-500 hover:bg-gray-100 transition disabled:opacity-40"
+              >
+                Prev
+              </button>
+              {pages.map((p, i) =>
+                p === "..." ? (
+                  <span key={`ellipsis-${i}`} className="px-2 text-gray-400">…</span>
+                ) : (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p)}
+                    className={`px-3 py-1.5 text-sm rounded-lg font-semibold transition ${
+                      p === page ? "bg-blue-600 text-white" : "text-gray-500 hover:bg-gray-100"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+              <button
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => p + 1)}
+                className="px-3 py-1.5 text-sm rounded-lg text-gray-500 hover:bg-gray-100 transition disabled:opacity-40"
+              >
+                Next
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

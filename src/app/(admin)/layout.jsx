@@ -7,6 +7,8 @@ import {
   Star, MessageSquare, Settings, Menu, X, LogOut, Bell,
 } from "lucide-react";
 import { useState } from "react";
+import { images } from "@/data/assets";
+import Image from "next/image";
 
 const sidebarLinks = [
   { name: "Dashboard",   href: "/admin/dashboard",   icon: LayoutDashboard },
@@ -25,9 +27,11 @@ function Sidebar({ onClose }) {
       {/* Logo */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
         <div>
-          <span className="text-blue-600 font-extrabold text-lg tracking-tight">Service</span>
-          <span className="text-gray-800 font-extrabold text-lg tracking-tight">Markaz</span>
-          <span className="ml-2 text-[10px] font-semibold bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full uppercase tracking-wide">Admin</span>
+          <Image
+            src={images.official_logo}
+            alt="ServiceMarkaz Logo"
+            width={120}
+            height={40} />
         </div>
         {onClose && (
           <button onClick={onClose} className="md:hidden text-gray-400 hover:text-gray-600">
