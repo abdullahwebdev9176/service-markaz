@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, Users, Building2, ListChecks,
+  LayoutDashboard, Users, Building2, ListChecks, MapPin,
   Star, MessageSquare, Settings, Menu, X, LogOut, Bell,
 } from "lucide-react";
 import { useState } from "react";
@@ -15,6 +15,7 @@ const sidebarLinks = [
   { name: "Users",       href: "/admin/users",        icon: Users },
   { name: "Businesses",  href: "/admin/businesses",   icon: Building2 },
   { name: "Categories",  href: "/admin/categories",   icon: ListChecks },
+  { name: "Cities",      href: "/admin/cities",       icon: MapPin },
   { name: "Reviews",     href: "/admin/reviews",      icon: Star },
   { name: "Messages",    href: "/admin/messages",     icon: MessageSquare },
   { name: "Settings",    href: "/admin/settings",     icon: Settings },
