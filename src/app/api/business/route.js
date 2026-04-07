@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { connectDB } from "@/lib/db/connect";
 import Business from "@/models/Business";
+import User from "@/models/User";
 
 function verifyToken(request) {
   const authHeader = request.headers.get("authorization");
@@ -91,6 +92,9 @@ export async function POST(request) {
     profileImage: profileImage || "",
     bannerImage: bannerImage || "",
   });
+
+  // Update user role to provider
+  await User.findByIdAndUpdate(payload.id, { role: "provider" });
 
   return NextResponse.json({ success: true, data: business }, { status: 201 });
 }
