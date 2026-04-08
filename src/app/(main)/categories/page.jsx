@@ -1,16 +1,19 @@
-import Link from "next/link";
-import { categories } from "@/data/categories";
+"use client";
 
 import SectionHeading from "@/app/components/ui/SectionHeading";
 import IntroSection from "@/app/components/ui/IntroSection";
 import PrimaryBtn from "@/app/components/ui/PrimaryBtn";
 import CategoriesGrid from "@/app/components/CategoriesGrid";
+import { useCategories } from "@/hooks/useCategories";
 
 const introTitle = "Browse Service Categories";
 const introSubtitle =
   "Find trusted professionals near you. Select a category to explore verified service providers available in your city.";
 
 export default function CategoriesPage() {
+
+  const { data: categories = [], isLoading, error } = useCategories();
+
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -29,7 +32,19 @@ export default function CategoriesPage() {
           subtitle="Browse through our most popular service categories"
         />
 
-        <CategoriesGrid categories={categories} />
+        {isLoading && (
+          <div className="flex justify-center py-12">
+            <p className="text-gray-600">Loading categories...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="flex justify-center py-12">
+            <p className="text-red-600">Failed to load categories</p>
+          </div>
+        )}
+
+        {!isLoading && !error && <CategoriesGrid categories={categories} />}
 
       </section>
 
