@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { categories } from "@/data/categories";
-import { cities } from "@/data/cities";
+import { useCities } from "@/hooks/useCities";
 import {
   MapPin,
   CheckCircle,
@@ -11,16 +13,7 @@ import {
   Shield,
   Clock,
 } from "lucide-react";
-
-export async function generateMetadata({ params }) {
-  const { category } = await params;
-  const categoryObj = categories.find((cat) => cat.slug === category);
-  if (!categoryObj) return { title: "Category Not Found" };
-  return {
-    title: `${categoryObj.name} Services in Pakistan | Service Markaz`,
-    description: `Find verified ${categoryObj.name.toLowerCase()} professionals in your city. Browse ratings, reviews and contact service providers directly.`,
-  };
-}
+import { useParams } from "next/navigation";
 
 const steps = [
   { step: "01", title: "Choose Your City", desc: "Select the city where you need the service." },
@@ -46,8 +39,12 @@ const features = [
   },
 ];
 
-const CategoryPage = async ({ params }) => {
-  const { category } = await params;
+
+const CategoryPage = () => {
+  const params = useParams();
+  const category = params?.category;
+  const { data: cities = [], isLoading, error } = useCities();
+
   const categoryObj = categories.find((cat) => cat.slug === category);
 
   if (!categoryObj) {
@@ -100,7 +97,7 @@ const CategoryPage = async ({ params }) => {
 
               <div className="flex flex-wrap gap-3 mt-5">
                 <span className="flex items-center gap-1.5 bg-white/15 rounded-full px-4 py-1.5 text-sm">
-                  <MapPin size={13} /> {cities.length} cities covered
+                  <MapPin size={13} /> {isLoading ? "..." : cities.length} cities covered
                 </span>
                 <span className="flex items-center gap-1.5 bg-white/15 rounded-full px-4 py-1.5 text-sm">
                   <CheckCircle size={13} /> Verified professionals
@@ -124,23 +121,44 @@ const CategoryPage = async ({ params }) => {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {cities.map((city) => (
+          {isLoading && (
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-600">Loading cities...</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="col-span-full text-center py-12">
+              <p className="text-red-600">Failed to load cities</p>
+            </div>
+          )}
+
+          {!isLoading && !error && cities.length > 0 && cities.map((city) => (
             <Link
-              key={city}
-              href={`/cities/${city.toLowerCase()}/${categoryObj.slug}`}
+              key={city.slug}
+              href={`/cities/${city.slug}/${categoryObj.slug}`}
               className="group bg-white border border-gray-200 rounded-xl p-5 text-center hover:border-blue-500 hover:shadow-md transition-all duration-200"
             >
               <div className="w-11 h-11 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-100 transition-colors">
                 <MapPin size={20} className="text-blue-600" />
               </div>
               <p className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
-                {city}
+                {city.name}
               </p>
+              {city.businessCount > 0 && (
+                <p className="text-xs text-gray-500 mt-1">{city.businessCount} services</p>
+              )}
               <span className="inline-flex items-center gap-1 mt-2 text-xs text-blue-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                 Browse <ArrowRight size={12} />
               </span>
             </Link>
           ))}
+
+          {!isLoading && !error && cities.length === 0 && (
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-500">No cities available at the moment</p>
+            </div>
+          )}
         </div>
       </section>
 
