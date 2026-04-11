@@ -5,6 +5,7 @@ import IntroSection from '@/app/components/ui/IntroSection'
 import SectionHeading from '@/app/components/ui/SectionHeading'
 import Link from "next/link";
 import { useCities } from '@/hooks/useCities';
+import CitiesCard from '@/app/components/CitiesCard';
 
 const CitiesPage = () => {
   const { data: cities = [], isLoading, error } = useCities();
@@ -19,7 +20,7 @@ const CitiesPage = () => {
       <IntroSection title={introContent.title} subtitle={introContent.subtitle} />
 
       {/* Cities Grid */}
-      <section className="max-w-6xl mx-auto px-6 py-14">
+      <section className="max-w-5xl mx-auto px-6 py-14">
         <SectionHeading
           title="Available Cities"
           subtitle="Click on your city to browse services near you"
@@ -40,16 +41,10 @@ const CitiesPage = () => {
         {!isLoading && !error && (
           <div className="flex flex-wrap justify-center gap-6">
             {cities.map((city) => (
-              <Link
-                key={city.slug}
-                href={`/cities/${city.slug}`}
-                className="bg-white border border-gray-200 shadow-sm rounded-xl px-6 py-4 hover:shadow-md hover:-translate-y-1 transition w-[45%] sm:w-[30%] md:w-[22%] lg:w-[18%] text-center"
-              >
-                <p className="text-gray-800 font-medium">{city.name}</p>
-                {city.businessCount > 0 && (
-                  <p className="text-xs text-gray-500 mt-1">{city.businessCount} services</p>
-                )}
-              </Link>
+              <CitiesCard
+                key={city.slug} city={city}
+                variant="simple"
+              />
             ))}
           </div>
         )}
