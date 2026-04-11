@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/db/connect";
 import Business from "@/models/Business";
+import "@/models/User"; // register User schema so Business.populate("owner") works
 
 /**
  * Normalize a MongoDB Business lean doc to the shape consumed by
