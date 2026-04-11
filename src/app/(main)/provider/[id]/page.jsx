@@ -1,5 +1,6 @@
 import { providers } from "@/data/providers";
-import { findProviderBySlug } from "@/utils/slug";
+import { findProviderBySlug, extractIdFromSlug } from "@/utils/slug";
+import { getBusinessById } from "@/lib/businesses";
 import ProfileHeader from "@/app/components/profile-components/ProfileHeader";
 import AboutSection from "@/app/components/profile-components/AboutSection";
 import ServicesSection from "@/app/components/profile-components/ServicesSection";
@@ -11,9 +12,17 @@ import ContactSection from "@/app/components/profile-components/ContactSection";
 
 const page = async ({ params }) => {
   const { id } = await params;
-  
-  // Find provider using slug (format: "name-area-city")
-  const provider = findProviderBySlug(id, providers);
+
+  // Try MongoDB first (slug ends with 24-char ObjectId)
+  // Fall back to static data for legacy numeric slugs
+  const extracted = extractIdFromSlug(id);
+  let provider = null;
+
+  if (extracted?.type === "mongo") {
+    provider = await getBusinessById(extracted.id);
+  } else {
+    provider = findProviderBySlug(id, providers);
+  }
 
   if (!provider) {
     return (

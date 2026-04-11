@@ -46,7 +46,8 @@ export default function BusinessesPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [summary, setSummary] = useState({ active: 0, pending: 0, blocked: 0 });
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [actionLoading, setActionLoading] = useState(null);
 
   const [search, setSearch] = useState("");
@@ -62,6 +63,7 @@ export default function BusinessesPage() {
   const fetchBusinesses = useCallback(async () => {
     if (!token) return;
     setLoading(true);
+    setError("");
     try {
       const params = new URLSearchParams({ page, limit: PAGE_SIZE });
       if (debouncedSearch) params.set("search", debouncedSearch);
@@ -78,7 +80,11 @@ export default function BusinessesPage() {
         setTotal(json.data.total);
         setTotalPages(json.data.totalPages);
         setSummary(json.data.summary);
+      } else {
+        setError(json.message || "Failed to load businesses.");
       }
+    } catch {
+      setError("Network error — could not reach the server.");
     } finally {
       setLoading(false);
     }
@@ -127,6 +133,12 @@ export default function BusinessesPage() {
           <p className="text-sm text-gray-500 mt-0.5">Manage all registered businesses on the platform.</p>
         </div>
       </div>
+
+      {error && (
+        <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+          {error}
+        </div>
+      )}
 
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

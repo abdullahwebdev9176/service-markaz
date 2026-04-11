@@ -46,17 +46,18 @@ export async function GET(request) {
     if (category) query.category = category;
     if (city) query.city = city;
 
-    const businesses = await Business.find(query)
-      .populate("owner", "name email phone role")
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .lean();
-
-    const total = await Business.countDocuments(query);
-    const totalActive = await Business.countDocuments({ status: "active" });
-    const totalPending = await Business.countDocuments({ status: "pending" });
-    const totalBlocked = await Business.countDocuments({ status: "blocked" });
+    const [businesses, total, totalActive, totalPending, totalBlocked] = await Promise.all([
+      Business.find(query)
+        .populate("owner", "name email phone role")
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean(),
+      Business.countDocuments(query),
+      Business.countDocuments({ status: "active" }),
+      Business.countDocuments({ status: "pending" }),
+      Business.countDocuments({ status: "blocked" }),
+    ]);
 
     return NextResponse.json({
       success: true,

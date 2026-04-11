@@ -1,21 +1,19 @@
 import SectionHeading from "@/app/components/ui/SectionHeading";
 import ProviderCard from "@/app/components/ProviderCard";
 import { categories } from "@/data/categories";
-import { providers } from "@/data/providers";
+import { getBusinesses } from "@/lib/businesses";
 
 const page = async ({ params }) => {
 
     const { city, category } = await params;
 
-    // Capitalize city and category nicely
+    // Capitalize city nicely and resolve category display name
     const cityName = city ? city.charAt(0).toUpperCase() + city.slice(1) : "";
     const categoryObj = categories.find((cat) => cat.slug === category);
     const categoryName = categoryObj ? categoryObj.name : category;
 
-    // Filter providers for this city & category
-    const filteredProviders = providers.filter(
-        (p) => p.city.toLowerCase() === city.toLowerCase() && p.category === category
-    );
+    // Fetch live providers from MongoDB for this city & category
+    const { businesses: providers } = await getBusinesses({ city, category });
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -37,11 +35,11 @@ const page = async ({ params }) => {
                     subtitle="Click on a provider to view details"
                 />
 
-                {filteredProviders.length === 0 ? (
+                {providers.length === 0 ? (
                     <p className="text-center text-gray-600">No providers found in this category for {cityName}.</p>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredProviders.map((provider) => (
+                        {providers.map((provider) => (
                             <ProviderCard
                                 key={provider.id}
                                 provider={provider}
