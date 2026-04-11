@@ -14,30 +14,10 @@ import {
   Clock,
 } from "lucide-react";
 import { useParams } from "next/navigation";
+import HowItWorks from "@/app/components/home/HowItWorks";
+import ChooseUs from "@/app/components/home/ChooseUs";
 
-const steps = [
-  { step: "01", title: "Choose Your City", desc: "Select the city where you need the service." },
-  { step: "02", title: "Browse Providers", desc: "View verified professionals with ratings and reviews." },
-  { step: "03", title: "Contact Directly", desc: "Reach out via phone or WhatsApp — no middlemen." },
-];
 
-const features = [
-  {
-    Icon: Shield,
-    title: "Verified Professionals",
-    desc: "Every provider is manually reviewed before listing on our platform.",
-  },
-  {
-    Icon: Star,
-    title: "Genuine Reviews",
-    desc: "Read real reviews from verified customers to make informed decisions.",
-  },
-  {
-    Icon: Clock,
-    title: "Fast Response",
-    desc: "Connect with available providers who respond within hours.",
-  },
-];
 
 
 const CategoryPage = () => {
@@ -162,46 +142,10 @@ const CategoryPage = () => {
         </div>
       </section>
 
-      {/* ── How It Works ── */}
-      <section className="bg-white border-t border-gray-100 py-16 px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold text-gray-800">How It Works</h2>
-            <p className="mt-2 text-gray-500">Find the right professional in 3 simple steps</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-            {steps.map(({ step, title, desc }) => (
-              <div key={step} className="flex flex-col items-center text-center">
-                <span className="text-5xl font-black text-blue-100 leading-none">{step}</span>
-                <h3 className="mt-2 font-semibold text-gray-800 text-lg">{title}</h3>
-                <p className="mt-1 text-gray-500 text-sm">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <HowItWorks />
 
       {/* ── Trust Features ── */}
-      <section className="bg-gray-50 border-t border-gray-100 py-16 px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold text-gray-800">Why Service Markaz?</h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-            {features.map(({ Icon: FeatureIcon, title, desc }) => (
-              <div key={title} className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm text-center">
-                <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <FeatureIcon size={26} className="text-blue-600" />
-                </div>
-                <h3 className="font-semibold text-gray-800 text-lg">{title}</h3>
-                <p className="mt-2 text-gray-500 text-sm leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <ChooseUs />
 
       {/* ── CTA Banner ── */}
       <section className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-14 px-6">
