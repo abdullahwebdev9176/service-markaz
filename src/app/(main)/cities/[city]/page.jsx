@@ -1,13 +1,17 @@
+"use client";
+
 import React from 'react'
-import { categories } from "@/data/categories";
-import Link from "next/link";
+import { useParams } from 'next/navigation';
 import SectionHeading from '@/app/components/ui/SectionHeading';
 import CategoriesGrid from '@/app/components/CategoriesGrid';
+import { useCategories } from '@/hooks/useCategories';
 
-const page = async ({ params }) => {
-
-    const { city } = await params;
+const Page = () => {
+    const params = useParams();
+    const city = params?.city || '';
     const cityName = city.charAt(0).toUpperCase() + city.slice(1);
+    
+    const { data: categories = [], isLoading, error } = useCategories();
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -29,14 +33,28 @@ const page = async ({ params }) => {
                     subtitle="Select a category to view local service providers"
                 />
 
-                <CategoriesGrid 
-                    categories={categories}
-                    href={(category) => `/cities/${city}/${category.slug}`}
-                />
+                {isLoading && (
+                    <div className="flex justify-center py-12">
+                        <p className="text-gray-600">Loading categories...</p>
+                    </div>
+                )}
+
+                {error && (
+                    <div className="flex justify-center py-12">
+                        <p className="text-red-600">Failed to load categories</p>
+                    </div>
+                )}
+
+                {!isLoading && !error && (
+                    <CategoriesGrid 
+                        categories={categories}
+                        href={(category) => `/cities/${city}/${category.slug}`}
+                    />
+                )}
             </section>
 
         </div>
     )
 }
 
-export default page
+export default Page
