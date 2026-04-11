@@ -11,16 +11,48 @@ export function normalizeBusiness(doc) {
     ...doc,
     _id: id,
     id,
+    // Basic info with defaults
+    name: doc.name || "",
+    category: doc.category || "",
+    city: doc.city || "",
+    area: doc.area || "",
+    about: doc.about || "",
+    title: doc.title || "",
     // ProviderCard expects `image` and `reviews`
     image: doc.profileImage || "",
     reviews: doc.reviewsCount ?? 0,
     rating: doc.rating ?? 0,
+    verification: doc.verification ?? false,
+    availability: doc.availability || "Unavailable",
+    responseTime: doc.responseTime || "",
+    experience: doc.experience ?? 0,
+    completedProjects: doc.completedProjects ?? 0,
+    // Profile images
+    profileImage: doc.profileImage || "",
+    bannerImage: doc.bannerImage || "",
+    // Contact info (ContactSection expects doc.contact[key])
+    contact: {
+      phone: doc.phone || "",
+      whatsapp: doc.whatsapp || "",
+      email: doc.email || "",
+    },
+    // Pricing (PricingSection expects doc.pricing[key])
+    pricing: doc.pricing || {
+      calloutFee: "",
+      hourlyRate: "",
+      minCharge: "",
+    },
     // ExperienceSection expects `experience_details`
     experience_details: {
       years: doc.experience ?? 0,
       projects: doc.completedProjects ?? 0,
       specializations: doc.specializations ?? [],
     },
+    // Ensure all array fields have defaults (so profile components don't crash on .map())
+    services: doc.services ?? [],
+    serviceAreas: doc.serviceAreas ?? [],
+    reviews_list: doc.reviews_list ?? [],
+    specializations: doc.specializations ?? [],
     // Serialize owner ObjectId so Next.js can pass it as a server component prop
     owner: doc.owner
       ? { ...doc.owner, _id: doc.owner._id?.toString() }

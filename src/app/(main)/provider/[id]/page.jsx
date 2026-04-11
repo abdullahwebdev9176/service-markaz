@@ -1,6 +1,6 @@
 import { providers } from "@/data/providers";
 import { findProviderBySlug, extractIdFromSlug } from "@/utils/slug";
-import { getBusinessById } from "@/lib/businesses";
+import { getBusinessById, normalizeBusiness } from "@/lib/businesses";
 import ProfileHeader from "@/app/components/profile-components/ProfileHeader";
 import AboutSection from "@/app/components/profile-components/AboutSection";
 import ServicesSection from "@/app/components/profile-components/ServicesSection";
@@ -21,7 +21,9 @@ const page = async ({ params }) => {
   if (extracted?.type === "mongo") {
     provider = await getBusinessById(extracted.id);
   } else {
-    provider = findProviderBySlug(id, providers);
+    const staticProvider = findProviderBySlug(id, providers);
+    // Normalize static data to ensure all expected fields exist
+    provider = staticProvider ? normalizeBusiness(staticProvider) : null;
   }
 
   if (!provider) {
